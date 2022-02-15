@@ -5,6 +5,8 @@ import { createWebHistory, createRouter } from "vue-router";
 import Login from "@/views/Login.vue";
 import Accueil from "@/views/Accueil.vue";
 import Profile from "@/views/Profile.vue";
+import ProfileUpdate from "@/views/ProfileUpdate.vue";
+import ProfileDelete from "@/views/ProfileDelete.vue";
 
 //Création du tableau de routes
 const routes = [
@@ -25,6 +27,18 @@ const routes = [
     name: 'profile',
     path: '/profile',
     component: Profile,
+  },
+  //route pour la page modification du profil
+  {
+    name: 'profileUpdate',
+    path: '/profileUpdate',
+    component: ProfileUpdate,
+  },
+    //route pour la page suppression du profil
+  {
+    name: 'profileDelete',
+    path: '/profileDelete',
+    component: ProfileDelete,
   }
 ]
 

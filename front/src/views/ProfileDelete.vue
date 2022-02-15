@@ -15,25 +15,23 @@
                 </nav>
         </header> 
         <!---------- CORPS ----------->
-        <section id="profil">
+        <section id="profileDelete">
             <div class="card">
                 <!---------- Profil ---------->
-                <h1>PRENOM NOM</h1>
+                <h1>SUPRRESSION DU COMPTE</h1>
                 <!---------- Avatar ---------->
                 <div class="avatar">
-                    <img src="../assets/avatar-woman.png"/> 
+                    <img src="../assets/avatar-woman.png"/>  
                 </div>
                 <!---------- Infos ---------->
                 <div class="infos">
-                   <h2>Email</h2>
-                   <p>adresse@email.com</p>
-                   <h2>Bio</h2>
-                   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas viverra, lacus non faucibus scelerisque, eros augue semper lectus, at elementum est massa non massa.</p> 
+                   <h2>Prénom Nom</h2>
+                   <p>Êtes-vous sûr de vouloir supprimer votre profil ? </p>
                 </div>  
                 <!---------- Boutons ---------->
                 <div class="buttons">
-                    <a href="/ProfileUpdate"><i class="fas fa-user-edit"></i></a>
-                    <a href="/ProfileDelete"><i class="far fa-trash-alt"></i></a>
+                    <a href="/Login"><button class="confirm">Confirmer</button></a>
+                    <a href="/Profile"><button class="cancel">Annuler</button></a>
                 </div>
             </div>   
         </section>  
@@ -51,13 +49,14 @@ body {
   margin: 0px;
   font-size: 15px;
 }
-/******** PROFIL *********/
-#profil{
+
+/******** PROFILE DELETE *********/
+#profileDelete {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-#profil .card {
+#profileDelete .card {
     display: flex;
     flex-direction: column;
     width: 500px;
@@ -70,41 +69,41 @@ body {
 h1{
     text-align: center;
 }
-#profil .avatar{
+#profileDelete .avatar{
     display: flex;
     align-self: center;
 }
-#profil .avatar img{
-    width: 150px;
+#profileDelete .avatar img{
+    width: 100px;
     border-radius: 50%;
 }
-#profil .infos{
+#profileDelete .infos{
     margin: 10px 20px 10px 20px;
+    text-align: center;
 }
 h2{
     font-size: 16px;
     margin: 15px 2px 2px 5px;
 }
 p {
-    background:#eff4f7;
-    border-radius: 8px;
-    padding: 0px 10px 0px 10px ;
+    padding: 0px 5px 0px 5px ;
     font-size: 14px;
-    margin: 2px;
+    margin: 15px 2px 10px 5px;
+
 }
-#profil .buttons {
+#profileDelete .buttons {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     margin-top: 10px;
 }
-#profil .buttons i {
-    font-size: 24px;
-    margin: 15px;
-}
-
-#profil .buttons i:hover {
-    color: #1976D2;
+#profileDelete .buttons button {
+    background: #1976D2;
+    color:white;
+    border-radius: 15px;
+    border: none;
+    padding: 8px;
+    margin: 0px 10px 10px 10px;
 }
 </style>

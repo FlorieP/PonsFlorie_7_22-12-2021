@@ -45,14 +45,12 @@ exports.createMessage = (req, res) => {
 
 //Création du GET pour afficher tous les messages
 exports.allMessage = (req, res, next) => {
-      //fonction find qui permet de trouver tous les messages
+    //fonction find qui permet de trouver tous les messages
       Message.findAll({
         order: [["id", "DESC"]],
-       include: [{ model: models.User, attributes:['id'] }]
-       
-        
+        include: [{ model: User, attributes: ['firstname'] }]
       })
-        .then((response) => res.status(200).json( response ))
+        .then((response) => res.status(200).json(response))
         .catch(error => res.status(400).json({ message: error.message }));
 },
 
@@ -60,7 +58,7 @@ exports.allMessage = (req, res, next) => {
 exports.oneMessage = (req, res, next) => {
       //fonction find qui permet de trouver un message
       Message.findOne({
-        include: [{ model: User }],
+        //include: [{ model: User }],
       })
         .then((response) => res.status(200).json( response ))
         .catch(error => res.status(400).json({ message: 'Impossible de récupérer le message' }));

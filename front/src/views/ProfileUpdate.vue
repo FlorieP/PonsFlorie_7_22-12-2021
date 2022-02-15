@@ -15,28 +15,30 @@
                 </nav>
         </header> 
         <!---------- CORPS ----------->
-        <section id="profil">
+        <section id="profileUpdate">
             <div class="card">
                 <!---------- Profil ---------->
-                <h1>PRENOM NOM</h1>
+                <h1>MODIFICATION PROFIL</h1>
                 <!---------- Avatar ---------->
                 <div class="avatar">
-                    <img src="../assets/avatar-woman.png"/> 
+                    <img src="../assets/avatar-woman.png"/>
+                    <i class="fas fa-paperclip"><span class="fichier">Aucun fichier</span></i>
                 </div>
                 <!---------- Infos ---------->
                 <div class="infos">
-                   <h2>Email</h2>
-                   <p>adresse@email.com</p>
-                   <h2>Bio</h2>
-                   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas viverra, lacus non faucibus scelerisque, eros augue semper lectus, at elementum est massa non massa.</p> 
+                   <label>Nom</label>
+                   <input type="text" name="lastname" placeholder="  Nom"/>
+                   <label>Prénom</label>
+                   <input type="text" name="firstname" placeholder="  Prénom"/>
+                   <label>Bio</label>
+                   <input type="text" name="bio" placeholder="  Bio"/>
                 </div>  
                 <!---------- Boutons ---------->
                 <div class="buttons">
-                    <a href="/ProfileUpdate"><i class="fas fa-user-edit"></i></a>
-                    <a href="/ProfileDelete"><i class="far fa-trash-alt"></i></a>
+                    <a href="/Profile"><button class="save">Sauvegarder</button></a>
                 </div>
             </div>   
-        </section>  
+        </section>      
     </div>
 </template>
 
@@ -51,13 +53,13 @@ body {
   margin: 0px;
   font-size: 15px;
 }
-/******** PROFIL *********/
-#profil{
+/******** PROFILE UPDATE *********/
+#profileUpdate{
     display: flex;
     flex-direction: column;
     align-items: center;
 }
-#profil .card {
+#profileUpdate .card {
     display: flex;
     flex-direction: column;
     width: 500px;
@@ -70,41 +72,57 @@ body {
 h1{
     text-align: center;
 }
-#profil .avatar{
-    display: flex;
-    align-self: center;
-}
-#profil .avatar img{
-    width: 150px;
-    border-radius: 50%;
-}
-#profil .infos{
-    margin: 10px 20px 10px 20px;
-}
-h2{
-    font-size: 16px;
-    margin: 15px 2px 2px 5px;
-}
-p {
-    background:#eff4f7;
-    border-radius: 8px;
+#profileUpdate input{
+    border-radius: 15px;
+    border:  solid 1px transparent;
+    width: 100%;
+    height: 35px;
     padding: 0px 10px 0px 10px ;
-    font-size: 14px;
-    margin: 2px;
+    background:#eff4f7;
 }
-#profil .buttons {
+#profileUpdate .avatar{
     display: flex;
     flex-direction: row;
-    align-items: center;
     justify-content: center;
-    margin-top: 10px;
+    align-items: center;
+    margin: 10px 20px 10px 20px;
 }
-#profil .buttons i {
-    font-size: 24px;
-    margin: 15px;
+#profileUpdate .avatar img{
+    width: 75px;
+    border-radius: 50%;
+    margin-right: 20px;
 }
-
-#profil .buttons i:hover {
+#profileUpdate .avatar i {
+    font-size: 18px;
     color: #1976D2;
+}
+#profileUpdate .avatar .fichier {
+    color:  grey;
+    font-size: 12px;
+    font-weight: 300;
+    margin-left: 8px;
+}
+#profileUpdate .infos{
+    margin: 10px 20px 10px 20px;
+    display: flex;
+    flex-direction: column;
+}
+#profileUpdate .infos label{
+    margin: 15px 2px 2px 5px;
+    font-weight: bold;
+    font-size: 16px;
+}
+#profileUpdate .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin: 15px 2px 2px 5px;
+}
+#profileUpdate .save {
+    background: #1976D2;
+    color:white;
+    border-radius: 15px;
+    border: none;
+    padding: 8px;
 }
 </style>

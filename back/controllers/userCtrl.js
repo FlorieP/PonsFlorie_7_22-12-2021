@@ -24,6 +24,7 @@ exports.signup = (req, res, next) => {
     var email = req.body.email;
     var password = req.body.password;
     var bio = req.body.bio;
+    var avatar = req.body.avatar;
 
     //Vérification de la validité des infos
     if (firstname == null || lastname == null || email == null || password == null) {
@@ -39,9 +40,9 @@ exports.signup = (req, res, next) => {
     }
     User.findOne({ email: email })
         .then(function (user) {
-            if (!user) {
+            if (user) {
                 //Chiffrement de l'email
-                const emailCrypto = cryptojs.HmacSHA256(email, process.env.CRYPTOJS_KEY_EMAIL).toString();
+                //const emailCrypto = cryptojs.HmacSHA256(email, process.env.CRYPTOJS_KEY_EMAIL).toString();
                 //Hashage du mot de passe
                 bcrypt.hash(password, 10)
                     //Récupération du hash de mdp 
@@ -50,9 +51,10 @@ exports.signup = (req, res, next) => {
                         const user = new User({
                             firstname: firstname,
                             lastname: lastname,
-                            email: emailCrypto,
+                            email: email /*emailCrypto*/,
                             password: hash,
                             bio: bio,
+                            avatar: avatar,
                             isAdmin: 0
                         });
                         //Enregistrement du nouvel utilisateur
@@ -83,9 +85,9 @@ exports.login = (req, res, next) => {
         return res.status(400).json({ 'error': 'Paramètres manquants' });
     }
     // Chiffrement email
-    const emailCrypto = cryptojs.HmacSHA256(email, process.env.CRYPTOJS_KEY_EMAIL).toString();
+    //const emailCrypto = cryptojs.HmacSHA256(email, process.env.CRYPTOJS_KEY_EMAIL).toString();
     //Utilisation de la méthode findOne pour trouver l'utilisateur qui correspond à l'adresse mail utilisé
-    User.findOne({ email: emailCrypto })
+    User.findOne({ email: User.email /*emailCrypto*/ })
         //Vérification de récupération d'un utilisateur
         .then(user => {
             //Si on a pas trouvé d'utilisateur renvoyer une erreur
@@ -102,6 +104,7 @@ exports.login = (req, res, next) => {
                     }
                     //Bon mdp, renvoi d'un json avec un id et un token 
                     res.status(200).json({
+               
                         userId: user.id,
                         //appel de la fonction sign de JWT
                         token: jwt.sign(
@@ -126,7 +129,7 @@ exports.login = (req, res, next) => {
 exports.profil = (req, res, next) => {
     //fonction findOne qui permet de trouver une utilisateur en particulier
     User.findOne({
-        attributes: ["firstname", "lastname", "bio", "email"],
+        attributes: ["firstname", "lastname", "bio", "avatar", "email"],
         where: { id: req.params.id },
     })
         .then((user) => {

@@ -24,10 +24,10 @@
         <input v-model="password" class="form__input" type="password" placeholder="Mot de passe"/>
       </div>
       <div class="form">
-        <button class="button" :class="{ 'button--disabled': !validatedFields }" v-if="mode == 'login'">
+        <button @click="login()" class="button" :class="{ 'button--disabled': !validatedFields }" v-if="mode == 'login'">
           <span>Se connecter</span>
         </button>
-        <button @click="createAccount()" class="button" :class="{ 'button--disabled': !validatedFields }" v-else>
+        <button @click="signup()" class="button" :class="{ 'button--disabled': !validatedFields }" v-else>
           <span>Créer mon compte</span>
         </button>
       </div>
@@ -75,8 +75,19 @@ export default {
     switchToSignup: function () {
       this.mode = "signup";
     },
-    createAccount: function () {
-      console.log(this.prenom, this.nom, this.email, this.password);
+    signup: function () {
+      this.$store.dispatch('signup',  {
+        email: this.email,
+        nom: this.nom,
+        prenom: this.prenom,
+        password: this.password
+      })
+    },
+    login: function () {
+      this.$store.dispatch('login',  {
+        email: this.email,
+        password: this.password
+      })
     },
   },
 };
