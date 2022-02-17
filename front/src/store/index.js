@@ -12,20 +12,31 @@ const store = createStore({
             userId: -1,
             token: '',
         },
+        userInfos: {
+            nom: '',
+            prenom: '',
+            email: '',
+            bio: '',
+            avatar: '',
+        }
     },
     mutations: {
         setStatus: function (state, status) {
             state.status = status;
         },
         logUser: function (state, user) {
+            axios.defaults.headers.common['Authorization'] = user.token;
             state.user = user;
+        },
+        userInfos: function(state, userInfos) {
+            state.userInfos = userInfos;
         }
     },
     actions: {
         //Fonction SignUp
         signup : ({commit}, userInfos) => {
             return new Promise ((resolve, reject) => {
-                commit;
+                commit('setStatus', 'loading');
                 console.log(userInfos);
                 axios.post('http://localhost:3000/api/user/signup', userInfos)
                 .then(response => {
@@ -61,6 +72,9 @@ const store = createStore({
             })
             
         },
+        //Fonction de récupération des infos utilisateur
+        getUserInfos : ()=> {
+        }
     }
 })
 

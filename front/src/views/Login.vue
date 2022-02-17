@@ -23,12 +23,20 @@
       <div class="form">
         <input v-model="password" class="form__input" type="password" placeholder="Mot de passe"/>
       </div>
+      <div class="form message_error" v-if="mode == 'login' && status == 'error_login'">
+        <p>Adresse mail et/ou mot de passe invalide</p>
+      </div>
+      <div class="form message_error" v-if="mode == 'create' && status == 'error_create'">
+        <p>Adresse mail déjà utilisée</p>
+      </div>
       <div class="form">
         <button @click="login()" class="button" :class="{ 'button--disabled': !validatedFields }" v-if="mode == 'login'">
-          <span>Se connecter</span>
+          <span v-if="status == 'loading'">Connexion en cours</span>
+          <span v-else>Se connecter</span>
         </button>
         <button @click="signup()" class="button" :class="{ 'button--disabled': !validatedFields }" v-else>
-          <span>Créer mon compte</span>
+          <span v-if="status == 'loading'">Création en cours</span>
+          <span v-else>Créer mon compte</span>
         </button>
       </div>
     </div>
@@ -36,6 +44,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   data: function () {
     return {
@@ -67,6 +77,7 @@ export default {
         }
       }
     },
+    ...mapState(['status'])
   },
   methods: {
     switchToLogin: function () {
@@ -76,17 +87,31 @@ export default {
       this.mode = "signup";
     },
     signup: function () {
+      const self = this.$router;
       this.$store.dispatch('signup',  {
         email: this.email,
         nom: this.nom,
         prenom: this.prenom,
         password: this.password
       })
+      .then(response => {
+        console.log(response);
+        self.login();
+      }, error => {
+        console.log(error.message)
+      })
     },
     login: function () {
+      const self = this.$router;
       this.$store.dispatch('login',  {
         email: this.email,
         password: this.password
+      })
+      .then(response => {
+        console.log(response);
+        self.push('/profile');
+      }, error => {
+        console.log(error.message)
       })
     },
   },
@@ -153,6 +178,12 @@ export default {
   margin: 16px 0px;
   gap: 16px;
   flex-wrap: wrap;
+}
+
+.message_error {
+  color: red;
+  justify-content: center;
+  font-size: 13px;
 }
 
 .form__input {

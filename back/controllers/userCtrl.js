@@ -23,8 +23,6 @@ exports.signup = (req, res, next) => {
     var lastname = req.body.lastname;
     var email = req.body.email;
     var password = req.body.password;
-    var bio = req.body.bio;
-    var avatar = req.body.avatar;
 
     //Vérification de la validité des infos
     if (firstname == null || lastname == null || email == null || password == null) {
@@ -54,8 +52,8 @@ exports.signup = (req, res, next) => {
                             lastname: lastname,
                             email: email /*emailCrypto*/,
                             password: hash,
-                            bio: bio,
-                            avatar: avatar,
+                            bio: "",
+                            avatar: "",
                             isAdmin: 0
                         });
                         //Enregistrement du nouvel utilisateur
