@@ -38,9 +38,10 @@ exports.signup = (req, res, next) => {
     if (!pw_Regex.test(password)) {
         return res.status(400).json({ 'error': 'Mot de passe inalide. Longeur entre 6 et 16 carctères incluant au moins un chiffre' });
     }
-    User.findOne({ email: !email })
+    User.findOne({ where : {email: email }})
         .then(function (user) {
-            if (user) {
+            console.log(user)
+            if (!user) {
                 //Chiffrement de l'email
                 //const emailCrypto = cryptojs.HmacSHA256(email, process.env.CRYPTOJS_KEY_EMAIL).toString();
                 //Hashage du mot de passe
@@ -87,9 +88,10 @@ exports.login = (req, res, next) => {
     // Chiffrement email
     //const emailCrypto = cryptojs.HmacSHA256(email, process.env.CRYPTOJS_KEY_EMAIL).toString();
     //Utilisation de la méthode findOne pour trouver l'utilisateur qui correspond à l'adresse mail utilisé
-    User.findOne({ email: User.email /*emailCrypto*/ })
+    User.findOne({ where: {email: email} /*emailCrypto*/ })
         //Vérification de récupération d'un utilisateur
         .then(user => {
+            console.log(user)
             //Si on a pas trouvé d'utilisateur renvoyer une erreur
             if (!user) {
                 return res.status(401).json({ error: 'Utilisateur non trouvé !' });
@@ -148,9 +150,8 @@ exports.profil = (req, res, next) => {
 exports.modify = (req, res, next) => {
     let userId = token.getUserId(req);
     console.log("userId:" + userId);
-    console.log(req.params.id);
     //Récupération du nom et l'url du fichier
-    User.findOne({ id: req.params.id })
+    User.findOne({ where: { id: req.params.id }})
         .then(user => {
             //Vérification de l'userId en comparaison avec l'userId du token
             if (userId != user.id) {
@@ -177,7 +178,7 @@ exports.delete = (req, res, next) => {
     console.log("userId:" + userId);
     console.log(req.params.id);
     //Récupération du nom et l'url du fichier
-    User.findOne({ id: req.params.id })
+    User.findOne({where :{ id: req.params.id }})
         .then(user => {
             //Vérification de l'userId en comparaison avec l'userId du token
             if (userId != user.id) {

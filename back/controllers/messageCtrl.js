@@ -48,7 +48,7 @@ exports.createMessage = (req, res) => {
     //fonction find qui permet de trouver tous les messages
     Message.findAll({
       order: [["id", "DESC"]],
-      include: [{ model: User, attributes: ['firstname'] }]
+      include: [ User]
     })
       .then((response) => res.status(200).json(response))
       .catch(error => res.status(400).json({ message: error.message }));

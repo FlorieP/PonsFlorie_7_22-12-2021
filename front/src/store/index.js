@@ -7,26 +7,60 @@ const axios = require('axios');
 //Création du store
 const store = createStore({
     state: {
-
+        status: '',
+        user: {
+            userId: -1,
+            token: '',
+        },
+    },
+    mutations: {
+        setStatus: function (state, status) {
+            state.status = status;
+        },
+        logUser: function (state, user) {
+            state.user = user;
+        }
     },
     actions: {
         //Fonction SignUp
         signup : ({commit}, userInfos) => {
-            commit,
-            console.log(userInfos);
-            axios.post('http://localhost:3000/api/user/signup', userInfos)
-            .then(response => console.log(response))
-           .catch(error => console.log(error.message));
-        
+            return new Promise ((resolve, reject) => {
+                commit;
+                console.log(userInfos);
+                axios.post('http://localhost:3000/api/user/signup', userInfos)
+                .then(response => {
+                        console.log(response),
+                        commit('setStatus', 'created');
+                        resolve(response);
+                })
+               .catch(error => {
+                    console.log(error),
+                    commit('setStatus', 'error_create');
+                    reject(error);
+                })
+            })
+            
         },
-        //Fonction SignUp
-        login(){
-            axios.post('http://localhost:3000/api/user/login', {
-                email: this.email,
-                password: this.password
-            }).then(response => console.log(response))
-            .catch(error => console.log(error));
-        } 
+        //Fonction Login
+        login : ({commit}, userInfos) => {
+            return new Promise ((resolve, reject) => {
+                commit('setStatus', 'loading');
+                console.log(userInfos);
+                axios.post('http://localhost:3000/api/user/login', userInfos)
+                .then(response => {
+                        console.log(response),
+                        commit('setStatus', '');
+                        commit('logUser', response.data);
+                        resolve(response);
+                })
+               .catch(error => {
+                    console.log(error),
+                    commit('setStatus', 'error_login');
+                    reject(error);
+                })
+            })
+            
+        },
     }
 })
 
