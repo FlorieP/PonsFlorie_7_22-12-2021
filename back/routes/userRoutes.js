@@ -13,9 +13,9 @@ const userCtrl = require('../controllers/userCtrl');
 //Création des routes
 router.post('/signup', userCtrl.signup);
 router.post('/login', userCtrl.login);
-router.get('/profil/:id', userCtrl.profil);
-router.put('/profil/:id', userCtrl.modify);
-router.delete('/profil/:id', userCtrl.delete);
+router.get('/profil/:id', auth, userCtrl.profil);
+router.put('/profil/:id', auth, userCtrl.modify);
+router.delete('/profil/:id', auth, userCtrl.delete);
 
 //Exportation du routeur de l'utilisateur
 module.exports = router;

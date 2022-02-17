@@ -12,11 +12,11 @@ const multer = require('../middleware/multer-config');
 const messageCtrl = require('../controllers/messageCtrl');
 
 //Création des routes
-router.post('/new', multer, messageCtrl.createMessage);
-router.get('/', messageCtrl.allMessage);
-router.get('/:id', messageCtrl.oneMessage);
-router.put('/:id', messageCtrl.modifyMessage);
-router.delete('/:id', messageCtrl.deleteMessage);
+router.post('/new', auth, multer, messageCtrl.createMessage);
+router.get('/', auth, messageCtrl.allMessage);
+router.get('/:id', auth, messageCtrl.oneMessage);
+router.put('/:id', auth,  messageCtrl.modifyMessage);
+router.delete('/:id', auth, messageCtrl.deleteMessage);
 
 //Exportation du routeur de l'utilisateur
 module.exports = router;

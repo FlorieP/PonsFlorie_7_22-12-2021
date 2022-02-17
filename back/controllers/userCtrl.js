@@ -38,7 +38,7 @@ exports.signup = (req, res, next) => {
     if (!pw_Regex.test(password)) {
         return res.status(400).json({ 'error': 'Mot de passe inalide. Longeur entre 6 et 16 carctères incluant au moins un chiffre' });
     }
-    User.findOne({ email: email })
+    User.findOne({ email: !email })
         .then(function (user) {
             if (user) {
                 //Chiffrement de l'email
@@ -104,7 +104,6 @@ exports.login = (req, res, next) => {
                     }
                     //Bon mdp, renvoi d'un json avec un id et un token 
                     res.status(200).json({
-               
                         userId: user.id,
                         //appel de la fonction sign de JWT
                         token: jwt.sign(
@@ -147,14 +146,28 @@ exports.profil = (req, res, next) => {
 
 //Création du PUT pour modifier le profil d'un utilisateur
 exports.modify = (req, res, next) => {
-    const userObject = req.file ?
-        {
-            ...req.body,
-            avatar: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-        } : { ...req.body }
-    User.update({ ...userObject, id: req.params.id }, { where: { id: req.params.id } })
-        .then(() => res.status(200).json({ ...userObject }))
-        .catch(error => res.status(400).json({ error }))
+    let userId = token.getUserId(req);
+    console.log("userId:" + userId);
+    console.log(req.params.id);
+    //Récupération du nom et l'url du fichier
+    User.findOne({ id: req.params.id })
+        .then(user => {
+            //Vérification de l'userId en comparaison avec l'userId du token
+            if (userId != user.id) {
+                res.status(403).json({ message: "Seul l'utilisateur concerné peut modifier son profil" })
+                    .catch((error) => res.status(400).json({ message: error.message }));
+            } else {
+                const userObject = req.file ?
+                    {
+                        ...req.body,
+                        avatar: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+                    } : { ...req.body }
+                User.update({ ...userObject, id: req.params.id }, { where: { id: req.params.id } })
+                    .then(() => res.status(200).json({ ...userObject }))
+                    .catch(error => res.status(400).json({ error }))
+            }
+        })
+        .catch(error => res.status(500).json({ message: error.message }));
 };
 
 
@@ -165,28 +178,27 @@ exports.delete = (req, res, next) => {
     console.log(req.params.id);
     //Récupération du nom et l'url du fichier
     User.findOne({ id: req.params.id })
-      .then(user => {
-        //Vérification de l'userId en comparaison avec l'userId du token
-        if (userId != user.id) {
-          res.status(403).json({ message: "Seul l'utilisateur concerné peut supprimer son compte" })
-            .catch((error) => res.status(400).json({ message: error.message }));
-        } else {
-            const filename ="";
-            if (user.avatar != null) {
-                //récupération du nom du fichier via un split de l'url
-                filename = user.avatar.split('/images/')[1];
-         
+        .then(user => {
+            //Vérification de l'userId en comparaison avec l'userId du token
+            if (userId != user.id) {
+                res.status(403).json({ message: "Seul l'utilisateur concerné peut supprimer son compte" })
+                    .catch((error) => res.status(400).json({ message: error.message }));
+            } else {
+                const filename = "";
+                if (user.avatar != null) {
+                    //récupération du nom du fichier via un split de l'url
+                    filename = user.avatar.split('/images/')[1];
+
+                }
+                //suppression du fichier
+                fs.unlink(`images/${filename}`, () => {
+                    //fonction qui permet de supprimer un utilisateur
+                    User.destroy({ where: { id: req.params.id } })
+                        //suppression de la sauce via le paramètre id
+                        .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
+                        .catch(error => res.status(400).json({ message: error.message }));
+                });
             }
-          //suppression du fichier
-          fs.unlink(`images/${filename}`, () => {
-            //fonction qui permet de supprimer un utilisateur
-            User.destroy({ where :{id: req.params.id}  })
-              //suppression de la sauce via le paramètre id
-              .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
-              .catch(error => res.status(400).json({ message: error.message}));
-          });
-        }
-      })
-      .catch(error => res.status(500).json({ message: error.message }));
-  };
-  
+        })
+        .catch(error => res.status(500).json({ message: error.message }));
+};

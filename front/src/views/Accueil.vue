@@ -29,12 +29,13 @@
                     </div>
                     <!---------- Boutons ---------->
                     <div class="footer">
-                        <i class="fas fa-paperclip"><span class="fichier">Aucun fichier</span></i>
-                        <button class="publier">Publier</button>
+                        <i @click="showAddPicture()" class="fas fa-paperclip"><span class="fichier">Aucun fichier</span></i>
+                        <input v-show="addPicture === true"  type="file" name="picture" id="picture">
+                        <button @click="publier" class="publier">Publier</button>
                     </div>
                 </div>  
             </div>    
-            <!---------- Messages ----------->  
+            <!---------- Messages ----------->      
             <div class="card">
                 <!---------- Entête messages ---------->
                 <div class="card_header">
@@ -57,7 +58,7 @@
                         <p>Mon super texte qui détaille ma super image.</p>
                     </div>
                     <!---------- Modif et Suppression ---------->
-                    <div class="buttons">
+                    <div v-if="mode == 'owner'" class="buttons">
                         <i class="far fa-edit"></i>
                         <i class="far fa-trash-alt"></i>
                     </div>
@@ -99,7 +100,7 @@
                 <!---------- Icons ---------->
                 <div class="card_footer">
                     <div class="comment">
-                        <p><i class="fas fa-comments"></i> <span class="number">2</span></p>
+                        <p><i @click="switchComments()" class="fas fa-comments"></i> <span class="number">2</span></p>
                     </div>
                     <div class="like">
                         <p><i class="fas fa-heart"></i> <span class="number">6</span></p>
@@ -107,7 +108,7 @@
                     </div>
                 </div>
                 <!---------- Commentaires ---------->
-                <div class="card_comments">
+                <div v-show="showComments === true" class="card_comments">
                     <div class="comments">
                         <!---------- Entête messages ---------->
                         <div class="comments_header">
@@ -122,7 +123,7 @@
                                     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac rhoncus nibh, sed placerat nisl. Praesent nisi massa, varius tincidunt erat accumsan, molestie lobortis orci. Etiam in magna ut neque congue luctus. Pellentesque dignissim laoreet luctus. </p>
                                 </div>  
                             </div>
-                            <div class="buttons">
+                            <div v-if="mode == 'owner'" class="buttons">
                                 <i class="far fa-edit"></i>
                                 <i class="far fa-trash-alt"></i>
                             </div>
@@ -151,7 +152,23 @@
 </template>
 
 <script>
-
+export default {
+    data: function () {
+        return {
+            showComments : false,
+            addPicture : false,
+            mode : 'user'
+        }
+    },
+    methods: {
+        switchComments: function () {
+            this.showComments = true
+        },
+        showAddPicture: function () {
+            this.showAddPicture = true
+        }
+    }
+}
 </script>
 
 <style scoped>

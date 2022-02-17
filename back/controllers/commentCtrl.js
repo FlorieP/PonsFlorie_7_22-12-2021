@@ -14,9 +14,10 @@ const token = require("../middleware/token");
 
 //Création du POST pour créer un commentaire
 exports.createComment = (req, res) => {
+  let userId = token.getUserId(req);
   User.findOne({
     attributes: ["firstname", "lastname", "avatar"],
-    where: { id: token.getUserId(req) },
+    where: { id: userId },
   })
   Comment.create({
     include: [

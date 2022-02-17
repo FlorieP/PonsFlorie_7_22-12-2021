@@ -6,16 +6,15 @@ const router = express.Router();
 
 //Importation des middleware
 const auth = require('../middleware/auth');
-const multer = require('../middleware/multer-config');
 
 //Importation du controller pour associer les fonctions aux routes 
 const commentCtrl = require('../controllers/commentCtrl');
 
 //Création des routes
-router.post('/new', multer, commentCtrl.createComment);
-router.get('/', commentCtrl.allComment);
-router.put('/:id', commentCtrl.modifyComment);
-router.delete('/:id', commentCtrl.deleteComment);
+router.post('/:id/comment/new', auth, commentCtrl.createComment);
+router.get('/:id/comment', auth, commentCtrl.allComment);
+router.put('/:id/comment/:id', auth, commentCtrl.modifyComment);
+router.delete('/:id/comment/:id', auth, commentCtrl.deleteComment);
 
 //Exportation du routeur de l'utilisateur
 module.exports = router;

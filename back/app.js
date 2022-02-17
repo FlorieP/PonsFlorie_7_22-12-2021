@@ -6,6 +6,7 @@ const path = require('path');
 //Importation des routes
 const userRoutes = require('./routes/userRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const commentRoutes = require('./routes/commentRoutes');
 
 //Création de la constante application express
 const app = express();
@@ -34,6 +35,7 @@ app.get('/', function (req, res) {
 //Création des méthodes d'utilisation des routes
 app.use('/api/user', userRoutes);
 app.use('/api/message', messageRoutes);
+app.use('/api/message', commentRoutes);
 
 //Exportation de l'application
 module.exports = app;

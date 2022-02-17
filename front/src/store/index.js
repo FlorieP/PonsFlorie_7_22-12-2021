@@ -11,14 +11,13 @@ const store = createStore({
     },
     actions: {
         //Fonction SignUp
-        signup(){
-            axios.post('http://localhost:3000/api/user/signup', {
-                email: this.email,
-                nom: this.nom,
-                prenom: this.prenom,
-                password: this.password
-            }).then(response => console.log(response))
-            .catch(error => console.log(error));
+        signup : ({commit}, userInfos) => {
+            commit,
+            console.log(userInfos);
+            axios.post('http://localhost:3000/api/user/signup', userInfos)
+            .then(response => console.log(response))
+           .catch(error => console.log(error.message));
+        
         },
         //Fonction SignUp
         login(){
