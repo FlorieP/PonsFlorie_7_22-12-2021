@@ -6,6 +6,7 @@ const axios = require('axios');
 
 //Création du store
 const store = createStore({
+
     state: {
         status: '',
         user: {
@@ -13,8 +14,8 @@ const store = createStore({
             token: '',
         },
         userInfos: {
-            nom: '',
-            prenom: '',
+            lastname: '',
+            firstname: '',
             email: '',
             bio: '',
             avatar: '',
@@ -25,7 +26,10 @@ const store = createStore({
             state.status = status;
         },
         logUser: function (state, user) {
-            axios.defaults.headers.common['Authorization'] = user.token;
+            //Rajoute un token dans le header de toutes les requêtes
+            axios.defaults.headers.common['Authorization'] = `token ${user.token}`;
+            console.log(user.token);
+            //MAJ le state de user de l'utilisateur connecté
             state.user = user;
         },
         userInfos: function(state, userInfos) {
@@ -53,7 +57,7 @@ const store = createStore({
             
         },
         //Fonction Login
-        login : ({commit}, userInfos) => {
+        login : ({commit}, userInfos ) => {
             return new Promise ((resolve, reject) => {
                 commit('setStatus', 'loading');
                 console.log(userInfos);
@@ -73,10 +77,22 @@ const store = createStore({
             
         },
         //Fonction de récupération des infos utilisateur
-        getUserInfos : ()=> {
+        getUserInfos : ({commit}, userId)=> {
+            console.log(commit);
+            console.log(userId);
+            axios.get(`http://localhost:3000/api/user/profil/${userId}`)
+            .then(response => {
+                console.log(response);
+                commit('userInfos', response.data);
+            })
+            .catch(error => {
+                console.log(error);
+            })
         }
     }
 })
+
+window.store = store;
 
 //Exportation du store
 export default store;

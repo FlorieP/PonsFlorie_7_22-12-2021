@@ -18,17 +18,17 @@
         <section id="profil">
             <div class="card">
                 <!---------- Profil ---------->
-                <h1>PRENOM NOM</h1>
+                <h1>{{ userInfos.firstname }} {{ userInfos.lastname }}</h1>
                 <!---------- Avatar ---------->
                 <div class="avatar">
-                    <img src="../assets/avatar-woman.png"/> 
+                    <img src="userInfos.avatar"/> 
                 </div>
                 <!---------- Infos ---------->
                 <div class="infos">
                    <h2>Email</h2>
-                   <p>adresse@email.com</p>
+                   <p>{{ userInfos.email }}</p>
                    <h2>Bio</h2>
-                   <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas viverra, lacus non faucibus scelerisque, eros augue semper lectus, at elementum est massa non massa.</p> 
+                   <p>{{ userInfos.bio }}</p> 
                 </div>  
                 <!---------- Boutons ---------->
                 <div class="buttons">
@@ -41,6 +41,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
     mounted: function() {
         console.log(this.$store.state.user);
@@ -48,8 +50,11 @@ export default {
             this.$router.push('/login');
             return;
         }
-        this.$store.dispatch('getUserInfos');
+        this.$store.dispatch('getUserInfos', this.$store.state.user.userId);
     },
+    computed: mapState([
+        'userInfos'
+    ])
 }
 </script>
 

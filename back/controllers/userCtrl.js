@@ -23,7 +23,7 @@ exports.signup = (req, res, next) => {
     var lastname = req.body.lastname;
     var email = req.body.email;
     var password = req.body.password;
-
+    debugger;
     //Vérification de la validité des infos
     if (firstname == null || lastname == null || email == null || password == null) {
         return res.status(400).json({ 'error': 'Paramètres manquants' });
@@ -36,6 +36,7 @@ exports.signup = (req, res, next) => {
     if (!pw_Regex.test(password)) {
         return res.status(400).json({ 'error': 'Mot de passe inalide. Longeur entre 6 et 16 carctères incluant au moins un chiffre' });
     }
+
     User.findOne({ where : {email: email }})
         .then(function (user) {
             console.log(user)
@@ -187,7 +188,6 @@ exports.delete = (req, res, next) => {
                 if (user.avatar != null) {
                     //récupération du nom du fichier via un split de l'url
                     filename = user.avatar.split('/images/')[1];
-
                 }
                 //suppression du fichier
                 fs.unlink(`images/${filename}`, () => {

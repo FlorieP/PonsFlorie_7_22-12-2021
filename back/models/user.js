@@ -11,19 +11,14 @@ module.exports = (sequelize, DataTypes) => {
     avatar: DataTypes.STRING,
     bio: DataTypes.STRING,
     isAdmin: DataTypes.BOOLEAN
-  }, {
-    classMethods:{
-      associate(models) {
-        // define association here
-        models.User.hasMany(models.Message);
-        models.User.hasMany(models.Like);
-        models.User.hasMany(models.Comment);
-      }
-    }
   })
-  /*User.associate = function (models) {
-    User.hasMany(models.Message);
-  };*/
+  //Appelé dans index.js
+  User.associate = (models) => {
+    // define association here
+    models.User.hasMany(models.Message);
+    models.User.hasMany(models.Like);
+    models.User.hasMany(models.Comment);
+  };
 
   return User;
 };

@@ -14,8 +14,8 @@
         <span class="card__action" @click="switchToLogin()">Se connecter</span>
       </p>
       <div class="form" v-if="mode == 'signup'">
-        <input v-model="prenom" class="form__input" type="text" placeholder="Prénom"/>
-        <input v-model="nom" class="form__input" type="text" placeholder="Nom"/>
+        <input v-model="firstname" class="form__input" type="text" placeholder="Prénom"/>
+        <input v-model="lastname" class="form__input" type="text" placeholder="Nom"/>
       </div>
       <div class="form">
         <input v-model="email" class="form__input" type="email" placeholder="Adresse mail"/>
@@ -50,8 +50,8 @@ export default {
   data: function () {
     return {
       mode: "login",
-      prenom: "",
-      nom: "",
+      firstname: "",
+      lastname: "",
       email: "",
       password: "",
     };
@@ -60,8 +60,8 @@ export default {
     validatedFields: function () {
       if (this.mode == "signup") {
         if (
-          this.prenom != "" &&
-          this.nom != "" &&
+          this.firstname != "" &&
+          this.lastname != "" &&
           this.email != "" &&
           this.password != ""
         ) {
@@ -87,11 +87,11 @@ export default {
       this.mode = "signup";
     },
     signup: function () {
-      const self = this.$router;
+      const self = this;
       this.$store.dispatch('signup',  {
         email: this.email,
-        nom: this.nom,
-        prenom: this.prenom,
+        lastname: this.lastname,
+        firstname: this.firstname,
         password: this.password
       })
       .then(response => {
