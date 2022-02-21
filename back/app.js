@@ -7,6 +7,7 @@ const path = require('path');
 const userRoutes = require('./routes/userRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const commentRoutes = require('./routes/commentRoutes');
+const likeRoutes = require('./routes/likeRoutes');
 
 //Création de la constante application express
 const app = express();
@@ -36,6 +37,7 @@ app.get('/', function (req, res) {
 app.use('/api/user', userRoutes);
 app.use('/api/message', messageRoutes);
 app.use('/api/message', commentRoutes);
+app.use('/api/message', likeRoutes);
 
 //Exportation de l'application
 module.exports = app;
