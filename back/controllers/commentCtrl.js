@@ -15,23 +15,19 @@ const token = require("../middleware/token");
 //Création du POST pour créer un commentaire
 exports.createComment = (req, res) => {
   let userId = token.getUserId(req);
-  User.findOne({
-    attributes: ["firstname", "lastname", "avatar"],
-    where: { id: userId },
-  })
-  Comment.create({
-    include: [
-      {
-        model: User,
-        attributes: ["firstname", "lastname", "avatar"],
-      },
-    ],
-    content: req.body.content,
-    UserId: req.body.UserId,
-    MessageId: req.body.MessageId,
-  })
-    .then(() => res.status(201).json({ message: 'Commentaire créé !' }))
-    .catch(error => res.status(400).json({ error }));
+  let user = User.findOne({ where: { id: userId } })
+    .then(user => {
+      Message.create({
+        include: [{ model: User },{ model: Message } ],
+        content: req.body.content,
+        userId: user.id,
+        messageId: Message.id
+      })
+        .then(() => res.status(201).json({ message: 'Message créé' }))
+        .catch(error => res.status(400).json({ message: error.message }));
+
+    })
+    .catch(error => { res.status(403).json({ message: error.message }) });
 };
 
 //Création du GET pour afficher tous les commentaires
