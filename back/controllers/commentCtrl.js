@@ -15,15 +15,15 @@ const token = require("../middleware/token");
 //Création du POST pour créer un commentaire
 exports.createComment = (req, res) => {
   let userId = token.getUserId(req);
-  let user = User.findOne({ where: { id: userId } })
-    .then(user => {
-      Message.create({
-        include: [{ model: User },{ model: Message } ],
+  let message = Message.findOne({ where: { id: req.params.id } })
+    .then(message => {
+      Comment.create({
+        include: [{ model: User }, { model: Message }],
         content: req.body.content,
-        userId: user.id,
-        messageId: Message.id
+        UserId: userId,
+        MessageId: req.params.id
       })
-        .then(() => res.status(201).json({ message: 'Message créé' }))
+        .then(() => res.status(201).json({ message: 'Commentaire créé' }))
         .catch(error => res.status(400).json({ message: error.message }));
 
     })
@@ -33,72 +33,51 @@ exports.createComment = (req, res) => {
 //Création du GET pour afficher tous les commentaires
 exports.allComment = (req, res, next) => {
   Comment.findAll({
-    where: {
-      MessageId: req.params.id
-    },
-    include: {
-      model: User,
-      required: true,
-      attributes: ["firstname", "lastname", "avatar"]
-    },
-    order: [["id", "DESC"]]
+    where: { MessageId: req.params.id },
+    order: [["id", "DESC"]],
+    include: [User]
   })
     .then(comments => { res.status(200).json(comments) })
-    .catch(error => res.status(400).json({ error }))
+    .catch(error => res.status(400).json({ message: error.message }))
 };
 
 //Création du PUT pour modifier un commentaire
 exports.modifyComment = (req, res, next) => {
-  Comment.findOne({ id: req.params.id })
+  let userId = token.getUserId(req);
+  Comment.findOne({ where: { id: req.params.id } })
     .then(comment => {
       //Vérification de l'userId en comparaison avec celui du commentaire
-      if (req.body.userId != comment.userId) {
+      if (userId != comment.userId) {
         res.status(403).json({ message: "Seul l'utilisateur qui a créé le commentaire peut le modifier" })
-          .catch((error) => res.status(400).json({ error }));
+          .catch((error) => res.status(400).json({ message: error.message }));
       } else {
-        //Savoir si il y a ou non une nouvelle image dans la modification
-        const commentObject = req.file ?
-          {
-            ...JSON.parse(req.body.comment),
-            imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-          } : { ...req.body };
         //fonction qui permet de mettre à jour un commentaire
-        Comment.updateOne({ id: req.params.id }, { ...commentObject, id: req.params.id })
+        Comment.update({ ...req.body }, { where: { id: req.params.id } })
           //modification du commentaire via le paramètre id 
           .then(() => res.status(200).json({ message: 'Commentaire modifié !' }))
-          .catch(error => res.status(400).json({ error }));
+          .catch(error => res.status(400).json({ message: error.message }));
       }
     })
-    .catch(error => res.status(500).json({ error }));
+    .catch(error => res.status(500).json({ message: error.message }));
 };
 
 //Création du DELETE pour supprimer un commentaire
 exports.deleteComment = (req, res, next) => {
-  //Récupération du nom et l'url du fichier
-  Comment.findOne({ id: req.params.id })
+  let userId = token.getUserId(req);
+  console.log(userId)
+  Comment.findOne({ where: { id: req.params.id }})
     .then(comment => {
-      //Récupération du token 
-      const token = req.headers.authorization.split(' ')[1];
-      //Décodage du token 
-      const decodedToken = jwt.verify(token, process.env.JWT_KEY_TOKEN);
-      // Récupération de l'userId inclus dans le token
-      const userId = decodedToken.userId;
-      //Vérification de l'userId en comlparaison à l'userId du message
+      //Vérification de l'userId en comparaison avec celui du commentaire
       if (userId != comment.userId) {
         res.status(403).json({ message: "Seul l'utilisateur qui a créé le commentaire peut le supprimer" })
-          .catch((error) => res.status(400).json({ error }));
+          .catch((error) => res.status(400).json({ message: error.message }));
       } else {
-        //récupération du nom du fichier via un split de l'url
-        const filename = comment.attachement.split('/images/')[1];
-        //suppression du fichier
-        fs.unlink(`images/${filename}`, () => {
-          //fonction qui permet de supprimer un message
-          Comment.deleteOne({ id: req.params.id })
-            //suppression duu message via le paramètre id
-            .then(() => res.status(200).json({ message: 'Commentaire supprimé !' }))
-            .catch(error => res.status(400).json({ error }));
-        });
+        //fonction qui permet de mettre à jour un commentaire
+        Comment.destroy({ where: { id: req.params.id } })
+          //suppression du commentaire via le paramètre id 
+          .then(() => res.status(200).json({ message: 'Commentaire supprimé!' }))
+          .catch(error => res.status(400).json({ message: error.message }));
       }
     })
-    .catch(error => res.status(500).json({ error }));
+    .catch(error => res.status(500).json({ message: error.message }));
 };

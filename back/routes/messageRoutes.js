@@ -15,8 +15,8 @@ const messageCtrl = require('../controllers/messageCtrl');
 router.post('/new', auth, multer, messageCtrl.createMessage);
 router.get('/', auth, messageCtrl.allMessage);
 router.get('/:id', auth, messageCtrl.oneMessage);
-router.put('/:id', auth,  messageCtrl.modifyMessage);
-router.delete('/:id', auth, messageCtrl.deleteMessage);
+router.put('/:id', auth,  multer, messageCtrl.modifyMessage);
+router.delete('/:id', auth, multer, messageCtrl.deleteMessage);
 
 //Exportation du routeur de l'utilisateur
 module.exports = router;

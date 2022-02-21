@@ -1,6 +1,5 @@
 //Importation des packages de node 
 const jwt = require('jsonwebtoken');
-const dotenv = require('dotenv').config();
 const fs = require('fs'); //filesystem
 
 //Importation du model message
@@ -16,7 +15,6 @@ exports.createMessage = (req, res) => {
   let attachement = "";
   let userId = token.getUserId(req);
   console.log("userId:" + userId);
-
   let user = User.findOne({ where: { id: userId } })
     .then(user => {
       //condition s'il y a une image jointe
@@ -31,8 +29,7 @@ exports.createMessage = (req, res) => {
         include: [{ model: User }],
         content: req.body.content,
         attachement: attachement,
-        userId: user.id
-
+        UserId: user.id
       })
         .then(() => res.status(201).json({ message: 'Message créé' }))
         .catch(error => res.status(400).json({ message: error.message }));
@@ -57,8 +54,9 @@ exports.createMessage = (req, res) => {
   //Création du GET pour afficher un message
   exports.oneMessage = (req, res, next) => {
     //fonction find qui permet de trouver un message
-    Message.findOne({
-      //include: [{ model: User }],
+    Message.findOne({ 
+      where: { id: req.params.id } ,
+      include: [ User]
     })
       .then((response) => res.status(200).json(response))
       .catch(error => res.status(400).json({ message: error.message }));
@@ -67,8 +65,6 @@ exports.createMessage = (req, res) => {
   //Création du PUT pour modifier un message
   exports.modifyMessage = (req, res, next) => {
     let userId = token.getUserId(req);
-    console.log("userId:" + userId);
-    console.log(req.params.id);
     //fonction find qui permet de trouver un message
     Message.findOne({ where: {id: req.params.id }})
       .then(message => {
@@ -95,8 +91,6 @@ exports.createMessage = (req, res) => {
 //Création du DELETE pour supprimer un message 
 exports.deleteMessage = (req, res, next) => {
   let userId = token.getUserId(req);
-  console.log("userId:" + userId);
-  console.log(req.params.id);
   //fonction find qui permet de trouver un message
   Message.findOne({ where: {id: req.params.id }})
     .then(message => {
@@ -105,11 +99,10 @@ exports.deleteMessage = (req, res, next) => {
         res.status(403).json({ message: "Seul l'utilisateur qui a créé le message peut le supprimer" })
           .catch((error) => res.status(400).json({ message: error.message }));
       } else {
-        const filename = "";
-        if (message.attachement != null) {
+        let filename = "";
+        if (User.avatar != null || User.avatar != "") {
           //récupération du nom du fichier via un split de l'url
           filename = message.attachement.split('/images/')[1];
-
         }
         //suppression du fichier
         fs.unlink(`images/${filename}`, () => {

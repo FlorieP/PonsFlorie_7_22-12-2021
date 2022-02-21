@@ -41,8 +41,6 @@ exports.signup = (req, res, next) => {
         .then(function (user) {
             console.log(user)
             if (!user) {
-                //Chiffrement de l'email
-                //const emailCrypto = cryptojs.HmacSHA256(email, process.env.CRYPTOJS_KEY_EMAIL).toString();
                 //Hashage du mot de passe
                 bcrypt.hash(password, 10)
                     //Récupération du hash de mdp 
@@ -53,8 +51,8 @@ exports.signup = (req, res, next) => {
                             lastname: lastname,
                             email: email /*emailCrypto*/,
                             password: hash,
-                            bio: "",
-                            avatar: "",
+                            bio: null,
+                            avatar: null,
                             isAdmin: 0
                         });
                         //Enregistrement du nouvel utilisateur
@@ -84,8 +82,6 @@ exports.login = (req, res, next) => {
     if (email == null || password == null) {
         return res.status(400).json({ 'error': 'Paramètres manquants' });
     }
-    // Chiffrement email
-    //const emailCrypto = cryptojs.HmacSHA256(email, process.env.CRYPTOJS_KEY_EMAIL).toString();
     //Utilisation de la méthode findOne pour trouver l'utilisateur qui correspond à l'adresse mail utilisé
     User.findOne({ where: {email: email} /*emailCrypto*/ })
         //Vérification de récupération d'un utilisateur
@@ -184,8 +180,8 @@ exports.delete = (req, res, next) => {
                 res.status(403).json({ message: "Seul l'utilisateur concerné peut supprimer son compte" })
                     .catch((error) => res.status(400).json({ message: error.message }));
             } else {
-                const filename = "";
-                if (user.avatar != null) {
+                let filename = "";
+                if (user.avatar != null || user.avatar.trim() != "") {
                     //récupération du nom du fichier via un split de l'url
                     filename = user.avatar.split('/images/')[1];
                 }
