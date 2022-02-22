@@ -19,8 +19,13 @@
             <!---------- Nouveau message ----------->
             <div class="card new-message">
                 <!---------- Avatar ---------->
-                <div class="avatar">
-                    <img src="../assets/avatar-woman.png"/>  
+                <div class="user">
+                    <div class="avatar">
+                        <img :src="userInfos.avatar"/>  
+                    </div>
+                    <div class="welcome">
+                        <h1>Bienvenue {{userInfos.firstname}}</h1>
+                    </div>
                 </div>
                 <!---------- Zone de texte ---------->
                 <div class="corps">
@@ -36,11 +41,11 @@
                 </div>  
             </div>    
             <!---------- Messages ----------->      
-            <div class="card">
+            <div v-for="message in messages" :key="message.id" class="card">
                 <!---------- Entête messages ---------->
                 <div class="card_header">
                     <div class="avatar">
-                        <img src="../assets/avatar-woman.png"/>  
+                        <img src=""/>  
                     </div>
                     <div class="name">
                         <p>Nom Prénom</p>
@@ -52,10 +57,10 @@
                 <!---------- Corps du messages ---------->
                 <div class="card_body">
                     <div class="files">
-                        <img src="../assets/cat.jpg"/>
+                        <img :src="message.attachement"/>
                     </div>
                     <div class="text">
-                        <p>Mon super texte qui détaille ma super image.</p>
+                        <p>{{message.content}}</p>
                     </div>
                     <!---------- Modif et Suppression ---------->
                     <div v-if="mode == 'owner'" class="buttons">
@@ -70,7 +75,7 @@
                     </div>
                     <div class="like">
                         <p><i class="fas fa-heart"></i> <span class="number">6</span></p>
-                        <p><i class="fas fa-heart-broken"></i> <span class="number">2</span></p>
+                        <!--<p><i class="fas fa-heart-broken"></i> <span class="number">2</span></p>-->
                     </div>
                 </div>
             </div>
@@ -152,20 +157,29 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
     mounted: function() {
-        console.log(this.$store.state.user);
+        //console.log(this.$store.state.user);
         if (this.$store.state.user.userId == -1){
             this.$router.push('/login');
             return;
         }
         this.$store.dispatch('getUserInfos', this.$store.state.user.userId);
+        this.$store.dispatch('getAllMessages', this.$store.state.messages);
+        console.log(this.$store.state.messages);
     },
+    computed: mapState([
+        'userInfos',
+        'messages'
+    ]),
     data: function () {
         return {
             showComments : false,
             addPicture : false,
-            mode : 'user'
+            mode : 'user',
+    
         }
     },
     methods: {
@@ -174,8 +188,7 @@ export default {
         },
         showAddPicture: function () {
             this.showAddPicture = true
-        }
-
+        },
     }
 }
 </script>
@@ -202,25 +215,45 @@ body {
     border-radius: 16px;
     margin: 10px;
 }
-/********NOUVEAU MESSAGES*********/
-#wall .new-message {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    padding: 10px;
-}
-#wall .avatar{
-    display: flex;
-    align-self: flex-start;
-}
 #wall .avatar img{
     width: 60px;
     height: 60px;
     border-radius: 50%;
+    object-fit: cover;
+}
+/********NOUVEAU MESSAGES*********/
+#wall .new-message {
+    display: flex;
+    flex-direction: COLUMN;
+    align-items: center;
+    padding: 15px;
+}
+#wall .new-message .user{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    /*padding-left: 10px;
+    padding-right: 10px*/
+}
+#wall .new-message .avatar{
+    flex: 5%;
+}
+#wall .new-message .welcome{
+    flex: 95%;
+    align-self: center;
 }
 #wall .new-message .corps{
     width: 100%;
     margin: 10px;
+    /*padding-left: 10px;
+    padding-right: 10px;*/
+}
+#wall .new-message h1{
+    text-align: center;
+    font-size: 18PX;
+    margin-block-start: 0px;
+    margin-block-end: 10px;
 }
 #wall .new-message input{
     border-radius: 15px;
@@ -267,6 +300,7 @@ body {
 #wall .card_header .name {
     font-weight: bold;
     font-size: 16px ;
+    text-align: center;
 }
 #wall .card_header .when {
     color:  grey;
@@ -343,7 +377,9 @@ body {
 }
 #wall .comments .comments_header img{
     width: 50px;
+    height: 50px;
     border-radius: 50%;
+    object-fit: cover;
 }
 #wall .comments .comments_body p {
     margin-block: 0px;

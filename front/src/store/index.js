@@ -28,6 +28,7 @@ const store = createStore({
 
     state: {
         status: '',
+        // USER //
         user : user,
         userInfos: {
             lastname: '',
@@ -35,7 +36,17 @@ const store = createStore({
             email: '',
             bio: '',
             avatar: '',
-        }
+        },
+        //MESSAGE //
+        messages: {
+            content: '',
+            attachement: '',
+            userId:'',
+            messageId: '',
+            avatar: '',
+            firstname: '' ,
+            lastname: '',
+        },
     },
     mutations: {
         setStatus: function (state, status) {
@@ -58,13 +69,16 @@ const store = createStore({
         },
         //MAJ du state userInfos après MAJ profile par user
         updateUserField (state, {newValue, fieldName }) {
-            console.log(newValue);
-            console.log(fieldName);
             state.userInfos[fieldName] = newValue
+        },
+        //MAJ du state messageInfos
+        messages: function(state, messages) {
+            state.messages = messages;
+
         }
     },
     actions: {
-        // ACTIONS USER//
+        ///////////////////  ACTIONS USER ////////////////// 
         //Fonction d'inscription de l'utilisateur
         signup : ({commit}, userInfos) => {
             return new Promise ((resolve, reject) => {
@@ -106,11 +120,11 @@ const store = createStore({
         },
         //Fonction de récupération des infos utilisateur
         getUserInfos : ({commit}, userId)=> {
-            console.log(commit);
-            console.log(userId);
+            //console.log(commit);
+            //console.log(userId);
             axios.get(`http://localhost:3000/api/user/profil/${userId}`)
             .then(response => {
-                console.log(response);
+                //console.log(response);
                 commit('userInfos', response.data);
             })
             .catch(error => {
@@ -145,17 +159,29 @@ const store = createStore({
                 commit;
                 axios.delete(`http://localhost:3000/api/user/profil/${userId}`, state.userInfos)
                 .then(response => {
-                    console.log(response)
+                    //console.log(response)
                     resolve(response);
                 })
                .catch(error => {
                     console.log(error)
                     reject(error);
                 })
-            })
-            
+            })  
         },
-    }
+
+        ///////////////////  ACTIONS MESSAGE ////////////////// 
+        //Fonction de récupération des infos utilisateur
+        getAllMessages : ({commit})=> {
+            axios.get(`http://localhost:3000/api/message/`)
+                .then(response => {
+                    commit('messages', response.data);
+                    console.log(response.data)
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        },
+    }   
 })
 
 window.store = store;

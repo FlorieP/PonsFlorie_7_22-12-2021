@@ -109,7 +109,7 @@ export default {
       })
       .then(response => {
         console.log(response);
-        self.push('/profile');
+        self.push('/accueil');
       }, error => {
         console.log(error.message)
       })

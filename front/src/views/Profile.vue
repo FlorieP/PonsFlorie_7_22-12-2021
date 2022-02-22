@@ -54,7 +54,8 @@ export default {
         this.$store.dispatch('getUserInfos', this.$store.state.user.userId);
     },
     computed: mapState([
-        'userInfos'
+        'userInfos',
+
     ])
 }
 </script>
