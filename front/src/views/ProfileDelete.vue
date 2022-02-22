@@ -30,8 +30,8 @@
                 </div>  
                 <!---------- Boutons ---------->
                 <div class="buttons">
-                    <a href="/Login"><button class="confirm">Confirmer</button></a>
-                    <a href="/Profile"><button @click="returnToProfile()" class="cancel">Annuler</button></a>
+                    <button @click="deleteProfile()" class="confirm">Confirmer</button>
+                    <button @click="returnToProfile()" class="cancel">Annuler</button>
                 </div>
             </div>   
         </section>  
@@ -56,6 +56,10 @@ export default {
     methods: {
         returnToProfile: function () {
             this.$router.push('/profile');
+        },
+        deleteProfile: function () {
+            this.$store.dispatch("deleteProfile");
+            this.$router.push('/login');
         }
     }
 }

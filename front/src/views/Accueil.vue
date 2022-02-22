@@ -159,6 +159,7 @@ export default {
             this.$router.push('/login');
             return;
         }
+        this.$store.dispatch('getUserInfos', this.$store.state.user.userId);
     },
     data: function () {
         return {
@@ -214,6 +215,7 @@ body {
 }
 #wall .avatar img{
     width: 60px;
+    height: 60px;
     border-radius: 50%;
 }
 #wall .new-message .corps{

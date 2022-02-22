@@ -51,8 +51,8 @@ exports.signup = (req, res, next) => {
                             lastname: lastname,
                             email: email /*emailCrypto*/,
                             password: hash,
-                            bio: null,
-                            avatar: null,
+                            bio: 'Ma bio',
+                            avatar: 'https://cdn.pixabay.com/photo/2018/11/13/22/01/instagram-3814081__340.png',
                             isAdmin: 0
                         });
                         //Enregistrement du nouvel utilisateur

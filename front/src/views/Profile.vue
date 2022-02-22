@@ -34,6 +34,7 @@
                 <div class="buttons">
                     <a href="/ProfileUpdate"><i class="fas fa-user-edit"></i></a>
                     <a href="/ProfileDelete"><i class="far fa-trash-alt"></i></a>
+                    <a href="/Login"><i class="fas fa-power-off"></i></a>
                 </div>
             </div>   
         </section>  
@@ -92,6 +93,7 @@ h1{
     width: 150px;
     height: 150px;
     border-radius: 50%;
+    object-fit: cover;
 }
 #profil .infos{
     margin: 10px 20px 10px 20px;
