@@ -21,7 +21,7 @@
                 <h1>{{ userInfos.firstname }} {{ userInfos.lastname }}</h1>
                 <!---------- Avatar ---------->
                 <div class="avatar">
-                    <img src="userInfos.avatar"/> 
+                    <img :src="userInfos.avatar"/> 
                 </div>
                 <!---------- Infos ---------->
                 <div class="infos">
@@ -90,6 +90,7 @@ h1{
 }
 #profil .avatar img{
     width: 150px;
+    height: 150px;
     border-radius: 50%;
 }
 #profil .infos{

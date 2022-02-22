@@ -29,8 +29,8 @@
                     </div>
                     <!---------- Boutons ---------->
                     <div class="footer">
-                        <i @click="showAddPicture()" class="fas fa-paperclip"><span class="fichier">Aucun fichier</span></i>
-                        <input v-show="addPicture === true"  type="file" name="picture" id="picture">
+                        <label for="file" class="label-file"> <i class="fas fa-paperclip"><span class="fichier">Aucun fichier</span></i></label>
+                        <input id="file" class="input-file" type="file">    
                         <button @click="publier" class="publier">Publier</button>
                     </div>
                 </div>  
@@ -243,6 +243,9 @@ body {
     font-size: 12px;
     font-weight: 300;
     margin-left: 8px;
+}
+#wall .input-file {
+    display: none;
 }
 #wall .publier {
     background: #1976D2;

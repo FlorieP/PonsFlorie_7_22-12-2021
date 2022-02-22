@@ -4,15 +4,31 @@ import { createStore } from 'vuex'
 //Axios
 const axios = require('axios');
 
+//Récupération des informations du User
+let user = localStorage.getItem('user');
+if (!user){
+    user= {
+        userId: -1,
+        token: '',
+    };
+} else {
+    try{
+        user= JSON.parse(user);
+        axios.defaults.headers.common['Authorization'] = `token ${user.token}`;
+    } catch (ex) {
+        user= {
+            userId: -1,
+            token: '',
+        };
+    }
+}
+
 //Création du store
 const store = createStore({
 
     state: {
         status: '',
-        user: {
-            userId: -1,
-            token: '',
-        },
+        user : user,
         userInfos: {
             lastname: '',
             firstname: '',
@@ -29,6 +45,8 @@ const store = createStore({
             //Rajoute un token dans le header de toutes les requêtes
             axios.defaults.headers.common['Authorization'] = `token ${user.token}`;
             console.log(user.token);
+            //Envoi des données utilisateurs dans le local storage
+            localStorage.setItem('user', JSON.stringify(user));
             //MAJ le state de user de l'utilisateur connecté
             state.user = user;
         },
@@ -88,7 +106,24 @@ const store = createStore({
             .catch(error => {
                 console.log(error);
             })
-        }
+        },
+        //Fonction ModifyProfile
+        modifyProfile : ({commit}, userId) => {
+            return new Promise ((resolve, reject) => {
+                commit;
+           
+                axios.put(`http://localhost:3000/api/user/profil/${userId}`)
+                .then(response => {
+                    console.log(response)
+                    resolve(response);
+                })
+               .catch(error => {
+                    console.log(error)
+                    reject(error);
+                })
+            })
+            
+        },
     }
 })
 

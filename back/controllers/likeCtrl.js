@@ -58,11 +58,7 @@ exports.removeLike = (req, res) => {
                     .catch((error) => res.status(400).json({ message: error.message }));
             } else {
                 console.log("bouh2")
-                Like.create({
-                    include: [{ model: User }, { model: Message }],
-                    UserId: userId,
-                    MessageId: req.params.id
-                })
+                Like.destroy()
                     .then(() => res.status(201).json({ message: 'Annulation du like' }))
                     .catch(error => res.status(400).json({ message: error.message }));
             }

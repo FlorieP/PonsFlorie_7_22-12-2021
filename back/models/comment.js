@@ -22,8 +22,7 @@ module.exports = (sequelize, DataTypes) => {
           allowNull: false
         },
         onDelete: 'CASCADE'
-      }),
-      models.Comment.hasMany(models.Like);
+      })
   }
   return Comment;
 };

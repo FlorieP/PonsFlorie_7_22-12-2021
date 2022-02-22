@@ -21,21 +21,22 @@
                 <h1>MODIFICATION PROFIL</h1>
                 <!---------- Avatar ---------->
                 <div class="avatar">
-                    <img src="../assets/avatar-woman.png"/>
-                    <i class="fas fa-paperclip"><span class="fichier">Aucun fichier</span></i>
+                    <img :src="userInfos.avatar"/>
+                    <label for="file" class="label-file"> <i class="fas fa-paperclip"><span class="fichier">Aucun fichier</span></i></label>
+                    <input id="file" class="input-file" type="file">
                 </div>
                 <!---------- Infos ---------->
                 <div class="infos">
                    <label>Nom</label>
-                   <input type="text" name="lastname" placeholder="  Nom"/>
+                   <input type="text" name="lastname" :placeholder="userInfos.lastname"/>
                    <label>Prénom</label>
-                   <input type="text" name="firstname" placeholder="  Prénom"/>
+                   <input type="text" name="firstname" :placeholder="userInfos.firstname"/>
                    <label>Bio</label>
-                   <input type="text" name="bio" placeholder="  Bio"/>
+                   <input type="text" name="bio" :placeholder="userInfos.bio"/>
                 </div>  
                 <!---------- Boutons ---------->
                 <div class="buttons">
-                    <a href="/Profile"><button class="save">Sauvegarder</button></a>
+                    <button @click="modifyProfile()" class="save">Sauvegarder</button>
                 </div>
             </div>   
         </section>      
@@ -43,7 +44,45 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 
+export default {
+    mounted: function() {
+        console.log(this.$store.state.user);
+        if (this.$store.state.user.userId == -1){
+            this.$router.push('/login');
+            return;
+        }
+        this.$store.dispatch('getUserInfos', this.$store.state.user.userId);
+    },
+    data: function () {
+        return {
+        firstname: "",
+        lastname: "",
+        bio: "",
+        avatar: "",
+        };
+    },
+    computed: mapState([
+        'userInfos'
+    ]),
+    methods: {
+        modifyProfile: function () {
+        this.$store.dispatch('modifyProfile',  {
+            lastname: this.lastname,
+            firstname: this.firstname,
+            bio: this.bio,
+            avatar: this.avatar
+        })
+        .then(response => {
+            console.log(response)
+            this.$router.push('/profile')
+        }, error => {
+            console.log(error.message)
+        })
+        }
+    }
+}
 </script>
 
 <style scoped>
@@ -82,15 +121,19 @@ h1{
 }
 #profileUpdate .avatar{
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     margin: 10px 20px 10px 20px;
 }
 #profileUpdate .avatar img{
     width: 75px;
+    height: 75px;
     border-radius: 50%;
-    margin-right: 20px;
+    margin-bottom: 10px;
+}
+#profileUpdate .input-file {
+    display: none;
 }
 #profileUpdate .avatar i {
     font-size: 18px;
@@ -103,7 +146,7 @@ h1{
     margin-left: 8px;
 }
 #profileUpdate .infos{
-    margin: 10px 20px 10px 20px;
+    margin: 0px 20px 10px 20px;
     display: flex;
     flex-direction: column;
 }

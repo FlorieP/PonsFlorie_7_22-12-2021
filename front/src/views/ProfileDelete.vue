@@ -21,17 +21,17 @@
                 <h1>SUPRRESSION DU COMPTE</h1>
                 <!---------- Avatar ---------->
                 <div class="avatar">
-                    <img src="../assets/avatar-woman.png"/>  
+                    <img :src="userInfos.avatar"/>  
                 </div>
                 <!---------- Infos ---------->
                 <div class="infos">
-                   <h2>Prénom Nom</h2>
+                   <h2>{{ userInfos.firstname }} {{ userInfos.lastname }}</h2>
                    <p>Êtes-vous sûr de vouloir supprimer votre profil ? </p>
                 </div>  
                 <!---------- Boutons ---------->
                 <div class="buttons">
                     <a href="/Login"><button class="confirm">Confirmer</button></a>
-                    <a href="/Profile"><button class="cancel">Annuler</button></a>
+                    <a href="/Profile"><button @click="returnToProfile()" class="cancel">Annuler</button></a>
                 </div>
             </div>   
         </section>  
@@ -39,7 +39,26 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 
+export default {
+    mounted: function() {
+        console.log(this.$store.state.user);
+        if (this.$store.state.user.userId == -1){
+            this.$router.push('/login');
+            return;
+        }
+        this.$store.dispatch('getUserInfos', this.$store.state.user.userId);
+    },
+    computed: mapState([
+        'userInfos'
+    ]),
+    methods: {
+        returnToProfile: function () {
+            this.$router.push('/profile');
+        }
+    }
+}
 </script>
 
 <style scoped>
@@ -75,6 +94,7 @@ h1{
 }
 #profileDelete .avatar img{
     width: 100px;
+    height: 100px;
     border-radius: 50%;
 }
 #profileDelete .infos{
