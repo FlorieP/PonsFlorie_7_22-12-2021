@@ -43,9 +43,6 @@ const store = createStore({
             attachement: '',
             userId:'',
             messageId: '',
-            avatar: '',
-            firstname: '' ,
-            lastname: '',
         },
     },
     mutations: {
@@ -71,10 +68,12 @@ const store = createStore({
         updateUserField (state, {newValue, fieldName }) {
             state.userInfos[fieldName] = newValue
         },
+       /* uploadImage (state, {imageUrl}) {
+            state.userInfos.avatar= imageUrl;
+        },*/
         //MAJ du state messageInfos
         messages: function(state, messages) {
             state.messages = messages;
-
         }
     },
     actions: {
@@ -136,7 +135,7 @@ const store = createStore({
             console.log(state.user.userId)
             console.log(commit)
             let userId = state.user.userId;
-            return new Promise ((resolve, reject) => {
+                return new Promise ((resolve, reject) => {
                 commit;
                 axios.put(`http://localhost:3000/api/user/profil/${userId}`, state.userInfos)
                 .then(response => {
@@ -180,6 +179,43 @@ const store = createStore({
                 .catch(error => {
                     console.log(error);
                 })
+        },
+        //Fonction de création d'un nouveau message
+        newMessage : ({commit}, messages) => {
+            return new Promise ((resolve, reject) => {
+                console.log(messages);
+                axios.post('http://localhost:3000/api/message/new', messages)
+                .then(response => {
+                        console.log(response),
+                        commit('setStatus', 'created');
+                        resolve(response);
+                })
+               .catch(error => {
+                    console.log(error),
+                    commit('setStatus', 'error_create');
+                    reject(error);
+                })
+            })
+            
+        },
+        //Fonction de modification d'un message
+        modifyMessage : ({commit, state}) => {
+            console.log(state.messages.userId)
+            console.log(commit)
+            let userId = state.messages.userId;
+                return new Promise ((resolve, reject) => {
+                commit;
+                axios.put(`http://localhost:3000/api/user/profil/${userId}`, state.messagesInfos)
+                .then(response => {
+                    console.log(response)
+                    resolve(response);
+                })
+               .catch(error => {
+                    console.log(error)
+                    reject(error);
+                })
+            })
+            
         },
     }   
 })

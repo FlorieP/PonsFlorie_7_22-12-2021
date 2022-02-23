@@ -100,6 +100,7 @@ h1{
     width: 100px;
     height: 100px;
     border-radius: 50%;
+    object-fit: cover;
 }
 #profileDelete .infos{
     margin: 10px 20px 10px 20px;

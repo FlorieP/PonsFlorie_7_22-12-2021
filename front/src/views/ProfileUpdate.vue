@@ -31,11 +31,9 @@
         <div class="avatar">
           <img :src="userInfos.avatar" />
           <label for="file" class="label-file">
-            <i class="fas fa-paperclip"
-              ><span class="fichier">{{ userInfos.avatar }}</span></i
-            ></label
-          >
-          <input id="file" class="input-file" type="file" />
+            <i class="fas fa-paperclip"><span class="fichier">{{ userInfos.avatar }}</span></i></label>
+          <input id="file" accept="image/*" @change="uploadImage" class="input-file" type="file"/>
+          <!--@change="uploadImage()-->
         </div>
         <!---------- Infos ---------->
         <div class="infos">
@@ -46,7 +44,7 @@
           <label>Prénom</label>
           <input type="text" name="firstname" :value="userInfos.firstname" @input="updateUserField"/>
           <label>Bio</label>
-          <input type="text" name="bio" :value="userInfos.bio" @input="updateUserField"/>
+          <input type="text" name="bio" :value="userInfos.bio" @input="updateUserField" />
         </div>
         <!---------- Boutons ---------->
         <div class="buttons">
@@ -61,28 +59,37 @@
 import { mapState } from "vuex";
 
 export default {
-    mounted: function() {
-        console.log(this.$store.state.user);
-        if (this.$store.state.user.userId == -1){
-            this.$router.push('/login');
-            return;
-        }
-        this.$store.dispatch('getUserInfos', this.$store.state.user.userId);
+  mounted: function () {
+    console.log(this.$store.state.user);
+    if (this.$store.state.user.userId == -1) {
+      this.$router.push("/login");
+      return;
+    }
+    this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
+  },
+  data: function () {
+    return {
+    };
+  },
+  computed: mapState(["userInfos"]),
+  methods: {
+    modifyProfile: function () {
+      this.$store.dispatch("modifyProfile");
+      this.$router.push("/profile");
     },
-    computed: mapState(["userInfos"]),
-    methods: {
-        modifyProfile: function () {
-            this.$store.dispatch("modifyProfile");
-            this.$router.push('/profile')
-        },
-        //fonction qui récupère le nom des champs etr les valeurs pour les envoyer au mmutateur
-        updateUserField(e) {
-            this.$store.commit("updateUserField", {
-                'newValue': e.target.value,
-                'fieldName': e.target.name
-            });
-        },
+    /*uploadImage(e) {
+      let image = e.target.files[0];
+      let imageUrl =URL.createObjectURL(image);
+      this.$store.commit("uploadImage", {imageUrl});
+    },*/
+    //fonction qui récupère le nom des champs etr les valeurs pour les envoyer au mutateur
+    updateUserField(e) {
+      this.$store.commit("updateUserField", {
+        newValue: e.target.value,
+        fieldName: e.target.name,
+      });
     },
+  },
 };
 </script>
 

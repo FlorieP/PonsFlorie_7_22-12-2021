@@ -7,6 +7,9 @@ import Accueil from "@/views/Accueil.vue";
 import Profile from "@/views/Profile.vue";
 import ProfileUpdate from "@/views/ProfileUpdate.vue";
 import ProfileDelete from "@/views/ProfileDelete.vue";
+import MessageGetOne from "@/views/MessageGetOne.vue";
+import MessageUpdate from "@/views/MessageUpdate.vue";
+import MessageDelete from "@/views/MessageDelete.vue";
 
 //Création du tableau de routes
 const routes = [
@@ -39,7 +42,26 @@ const routes = [
     name: 'profileDelete',
     path: '/profileDelete',
     component: ProfileDelete,
-  }
+  },
+  //route pour la page d'affichage d'une message
+  {
+    name: 'messageGetOne',
+    path: '/messageGetOne',
+    component: MessageGetOne,
+  },
+  //route pour la page modification de message
+  {
+    name: 'messageUpdate',
+    path: '/messageUpdate',
+    component: MessageUpdate,
+  },
+  //route pour la page suppresion de message
+  {
+    name: 'messageDelete',
+    path: '/messageDelete',
+    component: MessageDelete,
+  },
+  
 ]
 
 //Création du router
