@@ -100,8 +100,9 @@ exports.deleteMessage = (req, res, next) => {
           .catch((error) => res.status(400).json({ message: error.message }));
       } else {
         let filename = "";
-        if (User.avatar != null || User.avatar != "") {
+        if (message.attachement !== null) {
           //récupération du nom du fichier via un split de l'url
+          console.log('bouh ' + message.attachement)
           filename = message.attachement.split('/images/')[1];
         }
         //suppression du fichier

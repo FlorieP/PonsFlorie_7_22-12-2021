@@ -181,7 +181,7 @@ exports.delete = (req, res, next) => {
                     .catch((error) => res.status(400).json({ message: error.message }));
             } else {
                 let filename = "";
-                if (user.avatar != null || user.avatar.trim() != "") {
+                if (user.avatar !== null) {
                     //récupération du nom du fichier via un split de l'url
                     filename = user.avatar.split('/images/')[1];
                 }

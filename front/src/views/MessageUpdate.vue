@@ -25,31 +25,30 @@
                 <!---------- Entête messages ---------->
                 <div class="card_header">
                     <div class="avatar">
-                        <img src="../assets/avatar-man.png" />
+                        <img :src="messageInfos.User.avatar" />
                     </div>
                     <div class="name">
-                        <p>Nom Prénom</p>
+                        <p>{{messageInfos.User.firstname}} {{messageInfos.User.lastname}}</p>
                      </div>
                     <div class="when">
-                        <p>Date | Heure</p>
+                        <p>{{messageInfos.createdAt}}</p>
                     </div>
                 </div>
                 <!---------- Corps du messages ---------->
                 <div class="card_body">
-                    <div class="files">
-                        <img src="../assets/flower.jpg" />
+                    <div v-if="messageInfos.attachement !== null" class="files">
+                        <img :src="messageInfos.attachement" />
                         <input id="file" accept="image/*" @change="uploadImage" type="file"/>
                     </div>
                     <div class="text">
-                        <p>Mon super texte qui détaille ma super image.</p>
-                        <input type="text" name="firstname" placeholder="Votre message"/>
+                        <input type="text" name="content" :value="messageInfos.content" @input="updateMessageField" />    
                     </div>
                 </div>
                 <!---------- Icons ---------->
                 <div class="card_footer">
                     <!---------- Boutons ---------->
                     <div class="buttons">
-                        <button @click="UpdateMessage()" class="confirm">Sauvegarder</button>
+                        <button @click="updateMessage()" class="confirm">Sauvegarder</button>
                     </div>
                 </div>
             </div>
@@ -68,23 +67,29 @@ export default {
             return;
         }
         this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
-        this.$store.dispatch("getAllMessages", this.$store.state.messages);
+        this.$store.dispatch("getOneMessage", this.$route.params.id);
         console.log(this.$store.state.messages);
+        console.log(this.$route.params.id);
     },
-    computed: mapState(["userInfos", "messages"]),
+    computed: mapState(["userInfos", "messageInfos"]),
     data: function () {
         return {
             mode : 'owner',
-            //OwnerMode: "owner",
-            commentMode: null,
         };
     },
     methods: {
-
-            //Modification d'un message
-            UpdateMessage: function () {
-            //this.$store.dispatch("modifyMessage");
-            this.$router.push("/messageGetOne");
+        //fonction qui récupère le nom des champs etr les valeurs pour les envoyer au mutateur
+        updateMessageField(e) {
+            this.$store.commit("updateMessageField", {
+                newValue: e.target.value,
+                fieldName: e.target.name,
+            });
+        },
+        //Modification d'un message
+        updateMessage: function () {
+            console.log('Bouh1' + this.$route.params.id);
+            this.$store.dispatch("updateMessage", this.$route.params.id);
+            this.$router.push('/messageGetOne/' + this.$route.params.id);
         },
     },
 };

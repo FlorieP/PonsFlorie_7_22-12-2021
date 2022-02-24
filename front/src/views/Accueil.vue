@@ -49,10 +49,10 @@
         <!---------- Entête messages ---------->
         <div class="card_header">
           <div class="avatar">
-            <img src="https://cdn.pixabay.com/photo/2018/11/13/22/01/instagram-3814081__340.png"/>
+            <img :src="message.User.avatar"/>
           </div>
           <div class="name">
-            <p>Nom Prénom</p>
+            <p>{{message.User.firstname}} {{message.User.lastname}}</p>
           </div>
           <div class="when">
             <p>Date | Heure</p>
@@ -60,16 +60,18 @@
         </div>
         <!---------- Corps du messages ---------->
         <div class="card_body">
+          <a :href="'./messageGetOne/' + message.id">
           <div v-if="message.attachement !== null" class="files">
             <img :src="message.attachement" />
           </div>
           <div class="text">
             <p>{{ message.content }}</p>
           </div>
+          </a>
           <!---------- Modif et Suppression ---------->
           <div v-if="mode == 'owner'" class="buttons">
-             <a href="/MessageUpdate/"><i class="far fa-edit"></i></a>
-             <a href="/MessageDelete"><i class="far fa-trash-alt"></i></a>
+             <a :href="'/MessageUpdate/' + message.id"><i class="far fa-edit"></i></a>
+             <a :href="'/MessageDelete/' + message.id"><i class="far fa-trash-alt"></i></a>
           </div>
         </div>
         <!---------- Icons ---------->
@@ -176,8 +178,8 @@ export default {
       return;
     }
     this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
-    this.$store.dispatch("getAllMessages", this.$store.state.messages);
-    console.log(this.$store.state.messages);
+    this.$store.dispatch("getAllMessages");
+    console.log(this.$store.state.messages);	
   },
   computed: mapState(["userInfos", "messages"]),
   data: function () {
@@ -200,6 +202,7 @@ export default {
           content: this.content,
           userId: this.$store.state.user.userId,
         })
+        this.$router.go()	// Refreshes page
         .then(
           (response) => {
             console.log(response);
@@ -209,10 +212,10 @@ export default {
           }
         );
     },
-    //Modification d'un message
+    /*//Modification d'un message
     modifyMessage: function () {
         this.$store.dispatch("modifyMessage");
-    },
+    },*/
   },
 };
 </script>

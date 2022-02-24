@@ -25,22 +25,22 @@
                 <!---------- Entête messages ---------->
                 <div class="card_header">
                     <div class="avatar">
-                        <img src="../assets/avatar-man.png" />
+                        <img :src="messageInfos.User.avatar" />
                     </div>
                     <div class="name">
-                        <p>Nom Prénom</p>
+                        <p>{{messageInfos.User.firstname}} {{messageInfos.User.lastname}}</p>
                      </div>
                     <div class="when">
-                        <p>Date | Heure</p>
+                        <p>{{messageInfos.createdAt}}</p>
                     </div>
                 </div>
                 <!---------- Corps du messages ---------->
                 <div class="card_body">
-                    <div class="files">
-                        <img src="../assets/flower.jpg" />
+                    <div v-if="messageInfos.attachement !== null" class="files">
+                        <img :src="messageInfos.attachement" />
                     </div>
                     <div class="text">
-                            <p>Mon super texte qui détaille ma super image.</p>
+                        <p>{{messageInfos.content}}</p>
                     </div>
                 </div>
                 <!---------- Icons ---------->
@@ -71,23 +71,24 @@ export default {
             return;
         }
         this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
-        this.$store.dispatch("getAllMessages", this.$store.state.messages);
+        this.$store.dispatch("getOneMessage", this.$route.params.id);
         console.log(this.$store.state.messages);
+        console.log(this.$route.params.id);
     },
-    computed: mapState(["userInfos", "messages"]),
+    computed: mapState(["userInfos", "messageInfos"]),
     data: function () {
         return {
             mode : 'owner',
-            //OwnerMode: "owner",
             commentMode: null,
+
         };
     },
     methods: {
         returnToMessage: function () {
-            this.$router.push('/messageGetOne');
+            this.$router.push('/messageGetOne/' + this.$route.params.id);
         },
         deleteMessage: function () {
-            //this.$store.dispatch("deleteProfile");
+            this.$store.dispatch("deleteMessage", this.$route.params.id);
             this.$router.push('/accueil');
         }
     },

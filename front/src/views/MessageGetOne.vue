@@ -25,28 +25,28 @@
         <!---------- Entête messages ---------->
         <div class="card_header">
           <div class="avatar">
-            <img src="../assets/avatar-man.png" />
+            <img :src="messageInfos.User.avatar" />
           </div>
           <div class="name">
-            <p>Nom Prénom</p>
+            <p>{{messageInfos.User.firstname}} {{messageInfos.User.lastname}}</p>
           </div>
           <div class="when">
-            <p>Date | Heure</p>
+            <p>{{messageInfos.createdAt}}</p>
           </div>
         </div>
         <!---------- Corps du messages ---------->
         <div class="card_body">
-          <div class="files">
-            <img src="../assets/flower.jpg" />
+          <div v-if="messageInfos.attachement !== null" class="files">
+            <img :src="messageInfos.attachement" />
           </div>
           <div class="text">
-            <p>Mon super texte qui détaille ma super image.</p>
+            <p>{{messageInfos.content}}</p>
           </div>
         </div>
         <!---------- Modif et Suppression ---------->
         <div v-if="mode == 'owner'" class="buttons buttons_message">
-          <a href="/MessageUpdate/"><i class="far fa-edit"></i></a>
-          <a href="/MessageDelete"><i class="far fa-trash-alt"></i></a>
+          <a :href="'/messageUpdate/' + this.$route.params.id"><i class="far fa-edit"></i></a>
+          <a :href="'/messageDelete/' + this.$route.params.id"><i class="far fa-trash-alt"></i></a>
         </div>
         <!---------- Icons ---------->
         <div class="card_footer">
@@ -101,8 +101,8 @@
                 </div>
               </div>
               <div v-if="mode == 'owner'" class="buttons">
-                <i class="far fa-edit"></i>
-                <i class="far fa-trash-alt"></i>
+                <a :href="'/messageUpdate/' + this.$route.params.id"><i class="far fa-edit"></i></a>
+                <a :href="'/messageDelete/' + this.$route.params.id"><i class="far fa-trash-alt"></i></a>
               </div>
             </div>
           </div>
@@ -122,11 +122,12 @@ export default {
       this.$router.push("/login");
       return;
     }
-    this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
-    this.$store.dispatch("getAllMessages", this.$store.state.messages);
-    console.log(this.$store.state.messages);
+      this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
+      this.$store.dispatch("getOneMessage", this.$route.params.id);
+      console.log(this.$store.state.messages);
+      console.log(this.$route.params.id);
   },
-  computed: mapState(["userInfos", "messages"]),
+  computed: mapState(["userInfos", "messageInfos"]),
   data: function () {
     return {
       mode : 'owner',
@@ -135,6 +136,7 @@ export default {
     };
   },
   methods: {
+
     //Modification d'un message
     modifyMessage: function () {
         this.$store.dispatch("modifyMessage");
@@ -204,7 +206,7 @@ body {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin: 10px 10px 0px 10px;
+  margin: 0px 15px 0px 15px;
 }
 #getOneMessage .card_footer .like {
   display: flex;
@@ -293,6 +295,7 @@ body {
   display: flex;
   flex-direction: row;
   align-self: flex-end;
+  margin-right: 15px ;
 }
 #getOneMessage .comments .buttons {
   display: flex;

@@ -38,12 +38,28 @@ const store = createStore({
             avatar: '',
         },
         //MESSAGE //
-        messages: {
+        messages: [],
+        messageInfos: {
             content: '',
             attachement: '',
-            userId:'',
-            messageId: '',
-        },
+            createdAt: '',
+            User:{
+                avatar:'', 
+                firstname :'', 
+                lastname: '',
+            }
+         },
+    },
+    getters: {
+        humanizeDate: function(state, dateIso) {
+            if (!dateIso) {
+                return ""
+            }
+            const dateToHumanize = new Date(dateIso);
+            const dateHumanized = new Intl.DateTimeFormat('fr-FR').format(dateToHumanize);
+            const timeHumanized = new Intl.DateTimeFormat('fr-FR', {timeStyle: 'short' }).format(dateToHumanize);
+            return `${dateHumanized} | ${timeHumanized}`;
+        }
     },
     mutations: {
         setStatus: function (state, status) {
@@ -71,10 +87,21 @@ const store = createStore({
        /* uploadImage (state, {imageUrl}) {
             state.userInfos.avatar= imageUrl;
         },*/
-        //MAJ du state messageInfos
+        ////////////////// MUTATIONS DE USER ////////////////// 
+        //MAJ du state messageInfos après MAJ updateMessage
+        updateMessageField (state, {newValue, fieldName }) {
+            state.messageInfos[fieldName] = newValue,
+            console.log(fieldName),
+            console.log(newValue)
+        },    
+        //MAJ du state messages
         messages: function(state, messages) {
             state.messages = messages;
-        }
+        },
+        //MAJ du state messages
+        messageInfos: function(state, messageInfos) {
+            state.messageInfos = messageInfos;
+        },
     },
     actions: {
         ///////////////////  ACTIONS USER ////////////////// 
@@ -180,6 +207,18 @@ const store = createStore({
                     console.log(error);
                 })
         },
+        //Fonction de récupération des infos utilisateur
+        getOneMessage : ({commit}, messageId)=> {
+            axios.get(`http://localhost:3000/api/message/${messageId}`)
+                .then(response => {
+                    console.log(messageId);
+                    commit('messageInfos', response.data);
+                    console.log(response.data)
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+            },
         //Fonction de création d'un nouveau message
         newMessage : ({commit}, messages) => {
             return new Promise ((resolve, reject) => {
@@ -199,23 +238,39 @@ const store = createStore({
             
         },
         //Fonction de modification d'un message
-        modifyMessage : ({commit, state}) => {
-            console.log(state.messages.userId)
+        updateMessage : ({commit, state}, messageId) => {
             console.log(commit)
-            let userId = state.messages.userId;
-                return new Promise ((resolve, reject) => {
-                commit;
-                axios.put(`http://localhost:3000/api/user/profil/${userId}`, state.messagesInfos)
+            console.log('id du message est :' + messageId)
+            console.log('bouh 2' + state.messageInfos)
+            return new Promise ((resolve, reject) => {
+            commit;
+            axios.put(`http://localhost:3000/api/message/${messageId}`, state.messageInfos)
                 .then(response => {
                     console.log(response)
                     resolve(response);
                 })
                .catch(error => {
-                    console.log(error)
-                    reject(error);
+                    console.log(error.message)
+                    reject(error.message);
                 })
             })
-            
+        },
+        //Fonction de suppression d'un message
+        deleteMessage : ({commit}, messageId) => {
+            console.log(commit)
+            console.log('id du message est :' + messageId)
+            return new Promise ((resolve, reject) => {
+                commit;
+                axios.delete(`http://localhost:3000/api/message/${messageId}`)
+                .then(response => {
+                    //console.log(response)
+                    resolve(response);
+                })
+               .catch(error => {
+                    console.log(error.message)
+                    reject(error.message);
+                })
+            })  
         },
     }   
 })

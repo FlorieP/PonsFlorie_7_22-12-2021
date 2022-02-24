@@ -46,19 +46,19 @@ const routes = [
   //route pour la page d'affichage d'une message
   {
     name: 'messageGetOne',
-    path: '/messageGetOne',
+    path: '/messageGetOne/:id',
     component: MessageGetOne,
   },
   //route pour la page modification de message
   {
     name: 'messageUpdate',
-    path: '/messageUpdate',
+    path: '/messageUpdate/:id',
     component: MessageUpdate,
   },
   //route pour la page suppresion de message
   {
     name: 'messageDelete',
-    path: '/messageDelete',
+    path: '/messageDelete/:id',
     component: MessageDelete,
   },
   
