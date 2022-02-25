@@ -38,10 +38,24 @@ const store = createStore({
             avatar: '',
         },
         //MESSAGE //
+        //Tous les messages
         messages: [],
+        //Un message
         messageInfos: {
             content: '',
             attachement: '',
+            createdAt: '',
+            User:{
+                avatar:'', 
+                firstname :'', 
+                lastname: '',
+            }
+         },
+        //MESSAGE //
+        //Tous les commentaires
+        comments: [],
+        commentInfos: {
+            content: '',
             createdAt: '',
             User:{
                 avatar:'', 
@@ -87,20 +101,31 @@ const store = createStore({
        /* uploadImage (state, {imageUrl}) {
             state.userInfos.avatar= imageUrl;
         },*/
-        ////////////////// MUTATIONS DE USER ////////////////// 
+        ////////////////// MUTATIONS DE MESSAGE ////////////////// 
         //MAJ du state messageInfos après MAJ updateMessage
         updateMessageField (state, {newValue, fieldName }) {
             state.messageInfos[fieldName] = newValue,
             console.log(fieldName),
             console.log(newValue)
         },    
-        //MAJ du state messages
+        //MAJ du state du tableau messages
         messages: function(state, messages) {
             state.messages = messages;
         },
-        //MAJ du state messages
+        //MAJ du state d'un message
         messageInfos: function(state, messageInfos) {
             state.messageInfos = messageInfos;
+        },
+        ////////////////// MUTATIONS DE COMMENTAIRE ////////////////// 
+        //MAJ du state messageInfos après MAJ updateMessage
+        updateCommentField (state, {newValue, fieldName }) {
+            state.commentInfos[fieldName] = newValue,
+            console.log(fieldName),
+            console.log(newValue)
+        },    
+        //MAJ du state du tableau messages
+        comments: function(state, comments) {
+            state.comments = comments;
         },
     },
     actions: {
@@ -196,7 +221,7 @@ const store = createStore({
         },
 
         ///////////////////  ACTIONS MESSAGE ////////////////// 
-        //Fonction de récupération des infos utilisateur
+        //Fonction de récupération de tous les messages
         getAllMessages : ({commit})=> {
             axios.get(`http://localhost:3000/api/message/`)
                 .then(response => {
@@ -207,7 +232,7 @@ const store = createStore({
                     console.log(error);
                 })
         },
-        //Fonction de récupération des infos utilisateur
+        //Fonction de récupération des infos d'un message
         getOneMessage : ({commit}, messageId)=> {
             axios.get(`http://localhost:3000/api/message/${messageId}`)
                 .then(response => {
@@ -262,6 +287,53 @@ const store = createStore({
             return new Promise ((resolve, reject) => {
                 commit;
                 axios.delete(`http://localhost:3000/api/message/${messageId}`)
+                .then(response => {
+                    //console.log(response)
+                    resolve(response);
+                })
+               .catch(error => {
+                    console.log(error.message)
+                    reject(error.message);
+                })
+            })  
+        },
+        
+        ///////////////////  ACTIONS COMMENTAIRE ////////////////// 
+        //Fonction de récupération de tous les commentaires
+        getAllComments : ({commit}, messageId)=> {
+            axios.get(`http://localhost:3000/api/message/${messageId}/comment'`)
+                .then(response => {
+                    commit('comments', response.data);
+                    console.log(response.data)
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        },
+        //Fonction de modification d'un commentaire
+        updateComment : ({commit, state}, messageId, commentId) => {
+            console.log(commit)
+            console.log('id du message est :' + messageId + 'id du comment est :' + commentId)
+            return new Promise ((resolve, reject) => {
+            commit;
+            axios.put(`http://localhost:3000/api/message/${messageId}/comment/${commentId}`, state.commentInfos)
+                .then(response => {
+                    console.log(response)
+                    resolve(response);
+                })
+               .catch(error => {
+                    console.log(error.message)
+                    reject(error.message);
+                })
+            })
+        },
+        //Fonction de suppression d'un commentaire
+        deleteComment : ({commit}, messageId, commentId) => {
+            console.log(commit)
+            console.log('id du message est :' + messageId + 'id du comment est :' + commentId)
+            return new Promise ((resolve, reject) => {
+                commit;
+                axios.delete(`http://localhost:3000/api/message/${messageId}/comment/${commentId}`)
                 .then(response => {
                     //console.log(response)
                     resolve(response);

@@ -83,13 +83,16 @@
                 <img src="../assets/avatar-woman.png" />
               </div>
               <div v-if="commentMode === 'updateComment'" class=" comments_body">
-                  <input v-model="content" type="textarea" placeholder="  Quoi de neuf docteur ?"/>
+                  <input type="text" name="content" value="Quoi de neuf docteur ? " /> <!--@input="updateCommentField" -->
+                  <div class="buttons">
+                    <button @click="updateComment()" class="confirm">Sauvegarder</button>
+                  </div>
               </div> 
-              <div v-else-if="commentMode === 'deleteComment'" class=" comments_body">
+              <div v-else-if="commentMode === 'deleteComment'" class="deleteMode comments_body">
                 <p>Voulez-vous vraiment supprimé votre commentaire ?</p>
                 <div class="buttons">
-                  <button class="confirm">Confirmer</button>
-                  <button class="cancel">Annuler</button>
+                  <button @click="deleteComment()" class="confirm">Confirmer</button>
+                  <button @click="getMode()" class="cancel">Annuler</button>
                 </div>
               </div>
               <div v-else class="comments_body">
@@ -101,8 +104,8 @@
                 </div>
               </div>
               <div v-if="mode == 'owner'" class="buttons">
-                <a :href="'/messageUpdate/' + this.$route.params.id"><i class="far fa-edit"></i></a>
-                <a :href="'/messageDelete/' + this.$route.params.id"><i class="far fa-trash-alt"></i></a>
+                <i @click="updateMode()" class="far fa-edit"></i>
+                <i @click="deleteMode()" class="far fa-trash-alt"></i>
               </div>
             </div>
           </div>
@@ -114,6 +117,7 @@
 
 <script>
 import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   mounted: function () {
@@ -124,23 +128,59 @@ export default {
     }
       this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
       this.$store.dispatch("getOneMessage", this.$route.params.id);
+      //this.$store.dispatch("getAllComments", this.$route.params.id);
       console.log(this.$store.state.messages);
       console.log(this.$route.params.id);
+      //console.log(this.$store.state.comments);
   },
-  computed: mapState(["userInfos", "messageInfos"]),
+  computed: {
+    ...mapState([
+      "userInfos", 
+      "messageInfos"
+    ]),
+    ...mapGetters([
+      "humanizeDate"
+    ]),
+  },
   data: function () {
     return {
       mode : 'owner',
-      commentMode : 'updateComment',
-
+      commentMode : 'Comment',
     };
   },
   methods: {
-
-    //Modification d'un message
-    modifyMessage: function () {
-        this.$store.dispatch("modifyMessage");
+    //fonction qui récupère le nom des champs etr les valeurs pour les envoyer au mutateur
+    updateCommentField(e) {
+        this.$store.commit("updateCommentField", {
+            newValue: e.target.value,
+            fieldName: e.target.name,
+        });
     },
+    //Modification d'un commentaire
+    updateComment: function () {
+      console.log('fonction update');
+        //console.log("MEssageid " + this.$route.params.id + " Comment id " + this.comments.id);
+        //this.$store.dispatch("updateComment", this.$route.params.id, this.comments.id);
+        this.commentMode = "Comment";
+        //this.$router.go()	// Refreshes page
+    },
+    //Suppression d'un commentaire
+    deleteComment: function () {
+        console.log('fonction delete');
+        //this.$store.dispatch("deleteComment", this.$route.params.id, this.comments.id);
+        this.commentMode = "Comment";
+        //this.$router.go()	// Refreshes page
+    },
+    //Changement de
+    getMode: function () {
+        this.commentMode = 'Comment';
+    },
+    updateMode: function () {
+        this.commentMode = 'updateComment';
+    },
+    deleteMode: function () {
+        this.commentMode = 'deleteComment';
+    },         
   },
 };
 </script>
@@ -263,7 +303,7 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   margin: 10px;
 }
 #getOneMessage .comments .comments_header img {
@@ -275,9 +315,11 @@ body {
 /**** COMMENTAIRE BODY ****/ 
 #getOneMessage .comments .comments_body p {
   margin-block: 0px;
+  width: 100%;
 }
 #getOneMessage .comments .comments_body {
   margin: 5px 5px 5px 15px;
+  flex: 80%;
 }
 #getOneMessage .comments .comments_body .who {
   color: grey;
@@ -308,5 +350,27 @@ body {
 }
 #getOneMessage .buttons i:hover {
   color: #1976d2;
+}
+/******* SUPPRESSION ******/
+#getOneMessage .deleteMode p {
+    padding: 0px 5px 0px 5px ;
+    font-size: 14px;
+    margin: 15px 2px 10px 5px;
+    text-align: center;
+}
+#getOneMessage .comments_body .buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+#getOneMessage .buttons button {
+    background: #1976D2;
+    color:white;
+    border-radius: 15px;
+    border: none;
+    padding: 8px;
+    margin: 0px 10px 10px 10px;
 }
 </style>

@@ -212,10 +212,6 @@ export default {
           }
         );
     },
-    /*//Modification d'un message
-    modifyMessage: function () {
-        this.$store.dispatch("modifyMessage");
-    },*/
   },
 };
 </script>
