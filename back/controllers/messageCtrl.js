@@ -6,6 +6,8 @@ const fs = require('fs'); //filesystem
 const models = require('../models');
 const Message = models.Message;
 const User = models.User;
+const Comment = models.Comment;
+const Like = models.Like;
 
 //Importation des middlewares
 const token = require("../middleware/token");
@@ -45,9 +47,10 @@ exports.createMessage = (req, res) => {
     //fonction find qui permet de trouver tous les messages
     Message.findAll({
       order: [["id", "DESC"]],
-      include: [ User]
+      include: [ User, Comment, Like]
     })
-      .then((response) => res.status(200).json(response))
+      .then((response) => res.status(200).json(response)
+      )
       .catch(error => res.status(400).json({ message: error.message }));
   },
 

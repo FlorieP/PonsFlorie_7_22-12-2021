@@ -56,12 +56,6 @@ const store = createStore({
         comments: [],
         commentInfos: {
             content: '',
-            createdAt: '',
-            User:{
-                avatar:'', 
-                firstname :'', 
-                lastname: '',
-            }
          },
     },
     getters: {
@@ -301,7 +295,7 @@ const store = createStore({
         ///////////////////  ACTIONS COMMENTAIRE ////////////////// 
         //Fonction de récupération de tous les commentaires
         getAllComments : ({commit}, messageId)=> {
-            axios.get(`http://localhost:3000/api/message/${messageId}/comment'`)
+            axios.get(`http://localhost:3000/api/message/${messageId}/comment`)
                 .then(response => {
                     commit('comments', response.data);
                     console.log(response.data)
@@ -310,9 +304,27 @@ const store = createStore({
                     console.log(error);
                 })
         },
+        //Fonction de création d'un nouveau commentaire
+        newComment : ({commit}, {valeurContent, messageId}) => {
+            return new Promise ((resolve, reject) => {
+                axios.post(`http://localhost:3000/api/message/${messageId}/comment/new`,{content : valeurContent})
+                .then(response => {
+                        console.log(response),
+                        commit('setStatus', 'created');
+                        resolve(response);
+                })
+               .catch(error => {
+                    console.log(error),
+                    commit('setStatus', 'error_create');
+                    reject(error);
+                })
+            })
+            
+        },
         //Fonction de modification d'un commentaire
-        updateComment : ({commit, state}, messageId, commentId) => {
+        updateComment : ({commit, state}, {messageId, commentId}) => {
             console.log(commit)
+            console.log(state)
             console.log('id du message est :' + messageId + 'id du comment est :' + commentId)
             return new Promise ((resolve, reject) => {
             commit;
@@ -328,7 +340,7 @@ const store = createStore({
             })
         },
         //Fonction de suppression d'un commentaire
-        deleteComment : ({commit}, messageId, commentId) => {
+        deleteComment : ({commit}, {messageId, commentId}) => {
             console.log(commit)
             console.log('id du message est :' + messageId + 'id du comment est :' + commentId)
             return new Promise ((resolve, reject) => {
@@ -342,7 +354,7 @@ const store = createStore({
                     console.log(error.message)
                     reject(error.message);
                 })
-            })  
+            }) 
         },
     }   
 })

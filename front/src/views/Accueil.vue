@@ -77,10 +77,10 @@
         <!---------- Icons ---------->
         <div class="card_footer">
           <div class="comment">
-            <p><i class="fas fa-comments"></i> <span class="number">3</span></p>
+            <p><i class="fas fa-comments"></i> <span class="number">{{message.Comments.length}}</span></p>
           </div>
           <div class="like">
-            <p><i class="fas fa-heart"></i> <span class="number">6</span></p>
+            <p><i class="fas fa-heart"></i> <span class="number">{{message.Likes.length}}</span></p>
             <!--<p><i class="fas fa-heart-broken"></i> <span class="number">2</span></p>-->
           </div>
         </div>

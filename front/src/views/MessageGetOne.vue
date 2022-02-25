@@ -72,35 +72,36 @@
               </div>
               <div class="comments comments_body">
                 <input v-model="content" type="textarea" placeholder="  Quoi de neuf docteur ?"/>
+                <button @click="newComment()" class="publier">Publier</button>
               </div>
             </div>
           </div>
           <!---------- Commentaires ---------->
-          <div class="comments">
+          <div v-for="comment in comments" :key="comment.id" class="comments">
             <!---------- Entête messages ---------->
             <div class="comments_header">
               <div class="avatar">
-                <img src="../assets/avatar-woman.png" />
+                <img :src="comment.User.avatar" />
               </div>
               <div v-if="commentMode === 'updateComment'" class=" comments_body">
-                  <input type="text" name="content" value="Quoi de neuf docteur ? " /> <!--@input="updateCommentField" -->
+                  <input type="text" name="content" :value="comment.content" @input="updateCommentField"/> 
                   <div class="buttons">
-                    <button @click="updateComment()" class="confirm">Sauvegarder</button>
+                    <button @click="updateComment(comment.id)" class="confirm">Sauvegarder</button>
                   </div>
               </div> 
               <div v-else-if="commentMode === 'deleteComment'" class="deleteMode comments_body">
                 <p>Voulez-vous vraiment supprimé votre commentaire ?</p>
                 <div class="buttons">
-                  <button @click="deleteComment()" class="confirm">Confirmer</button>
+                  <button @click="deleteComment(comment.id)" class="confirm">Confirmer</button>
                   <button @click="getMode()" class="cancel">Annuler</button>
                 </div>
               </div>
               <div v-else class="comments_body">
                 <div class="who">
-                  <p>Publié par <span class="name">Nom Prénom</span> le Date à Heure</p>
+                  <p>Publié par <span class="name">{{comment.User.firstname}} {{comment.User.lastname}}</span> le {{comment.createdAt}}</p>
                 </div>
                 <div class="text">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac rhoncus nibh, sed placerat nisl. Praesent nisi massa, varius tincidunt erat accumsan, molestie lobortis orci. Etiam in magna ut neque congue luctus. Pellentesque dignissim laoreet luct.</p>
+                  <p>{{comment.content}}</p>
                 </div>
               </div>
               <div v-if="mode == 'owner'" class="buttons">
@@ -128,15 +129,16 @@ export default {
     }
       this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
       this.$store.dispatch("getOneMessage", this.$route.params.id);
-      //this.$store.dispatch("getAllComments", this.$route.params.id);
+      this.$store.dispatch("getAllComments", this.$route.params.id);
       console.log(this.$store.state.messages);
       console.log(this.$route.params.id);
-      //console.log(this.$store.state.comments);
+      console.log(this.$store.state.comments);
   },
   computed: {
     ...mapState([
       "userInfos", 
-      "messageInfos"
+      "messageInfos",
+      "comments"
     ]),
     ...mapGetters([
       "humanizeDate"
@@ -146,6 +148,7 @@ export default {
     return {
       mode : 'owner',
       commentMode : 'Comment',
+      content: ''
     };
   },
   methods: {
@@ -156,20 +159,42 @@ export default {
             fieldName: e.target.name,
         });
     },
+    //Creation d'un nouveau message
+    newComment: function () {
+      console.log('fonction new');
+       this.$store
+        .dispatch("newComment", {
+          valeurContent: this.content,
+          messageId : this.$route.params.id,
+        })
+        .then(
+          (response) => {
+            console.log(response);
+            this.$router.go()	// Refreshes page
+          },
+          (error) => {
+            console.log(error.message);
+          }
+        ); 
+    },
     //Modification d'un commentaire
-    updateComment: function () {
+    updateComment: function (commentId) {
       console.log('fonction update');
-        //console.log("MEssageid " + this.$route.params.id + " Comment id " + this.comments.id);
-        //this.$store.dispatch("updateComment", this.$route.params.id, this.comments.id);
+        console.log("Messageid " + this.$route.params.id + " Comment id " + commentId);
+        this.$store.dispatch("updateComment", {
+          messageId :this.$route.params.id, 
+          commentId : commentId});
         this.commentMode = "Comment";
-        //this.$router.go()	// Refreshes page
+        this.$router.go()	// Refreshes page
     },
     //Suppression d'un commentaire
-    deleteComment: function () {
+    deleteComment: function (commentId) {
         console.log('fonction delete');
-        //this.$store.dispatch("deleteComment", this.$route.params.id, this.comments.id);
-        this.commentMode = "Comment";
-        //this.$router.go()	// Refreshes page
+        this.$store.dispatch("deleteComment", {
+          messageId :this.$route.params.id, 
+          commentId : commentId});
+          this.commentMode = "Comment";
+          this.$router.go()	// Refreshes page
     },
     //Changement de
     getMode: function () {
