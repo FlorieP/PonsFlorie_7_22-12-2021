@@ -28,6 +28,7 @@ const store = createStore({
 
     state: {
         status: '',
+        uploadFile: null,
         // USER //
         user : user,
         userInfos: {
@@ -59,14 +60,17 @@ const store = createStore({
          },
     },
     getters: {
-        humanizeDate: function(state, dateIso) {
-            if (!dateIso) {
-                return ""
+        humanizeDate: function(state) {
+            state
+            return function(dateIso) {
+                if (!dateIso) {
+                    return ""
+                }
+                const dateToHumanize = new Date(dateIso);
+                const dateHumanized = new Intl.DateTimeFormat('fr-FR').format(dateToHumanize);
+                const timeHumanized = new Intl.DateTimeFormat('fr-FR', {timeStyle: 'short' }).format(dateToHumanize);
+                return `${dateHumanized.replaceAll('/', '.')} à ${timeHumanized}`;
             }
-            const dateToHumanize = new Date(dateIso);
-            const dateHumanized = new Intl.DateTimeFormat('fr-FR').format(dateToHumanize);
-            const timeHumanized = new Intl.DateTimeFormat('fr-FR', {timeStyle: 'short' }).format(dateToHumanize);
-            return `${dateHumanized} | ${timeHumanized}`;
         }
     },
     mutations: {
@@ -92,9 +96,9 @@ const store = createStore({
         updateUserField (state, {newValue, fieldName }) {
             state.userInfos[fieldName] = newValue
         },
-       /* uploadImage (state, {imageUrl}) {
-            state.userInfos.avatar= imageUrl;
-        },*/
+        uploadImage (state, {image}) {
+            state.uploadFile= image;
+        },
         ////////////////// MUTATIONS DE MESSAGE ////////////////// 
         //MAJ du state messageInfos après MAJ updateMessage
         updateMessageField (state, {newValue, fieldName }) {
@@ -181,16 +185,23 @@ const store = createStore({
             console.log(state.user.userId)
             console.log(commit)
             let userId = state.user.userId;
-                return new Promise ((resolve, reject) => {
+            let formData = new FormData();
+            if (state.uploadFile) {
+                formData.append("image", state.uploadFile);
+            }
+            formData.append("userInfos", JSON.stringify(state.userInfos));
+            return new Promise ((resolve, reject) => {
                 commit;
-                axios.put(`http://localhost:3000/api/user/profil/${userId}`, state.userInfos)
+                axios.put(`http://localhost:3000/api/user/profil/${userId}`, formData, {headers: {
+                    'Content-Type': 'multipart/form-data'
+                  }})
                 .then(response => {
                     console.log(response)
                     resolve(response);
                 })
                .catch(error => {
-                    console.log(error)
-                    reject(error);
+                    console.log(error.message)
+                    reject(error.message);
                 })
             })
             
@@ -239,10 +250,17 @@ const store = createStore({
                 })
             },
         //Fonction de création d'un nouveau message
-        newMessage : ({commit}, messages) => {
+        newMessage : ({commit, state}, messageInfos) => {
             return new Promise ((resolve, reject) => {
-                console.log(messages);
-                axios.post('http://localhost:3000/api/message/new', messages)
+                console.log(messageInfos);
+                let formData = new FormData();
+                if (state.uploadFile) {
+                    formData.append("image", state.uploadFile);
+                }
+                formData.append("messageInfos", JSON.stringify(messageInfos));
+                axios.post('http://localhost:3000/api/message/new', formData, {headers: {
+                    'Content-Type': 'multipart/form-data'
+                  }})
                 .then(response => {
                         console.log(response),
                         commit('setStatus', 'created');
@@ -263,7 +281,14 @@ const store = createStore({
             console.log('bouh 2' + state.messageInfos)
             return new Promise ((resolve, reject) => {
             commit;
-            axios.put(`http://localhost:3000/api/message/${messageId}`, state.messageInfos)
+            let formData = new FormData();
+            if (state.uploadFile) {
+                formData.append("image", state.uploadFile);
+            }
+            formData.append("messageInfos", JSON.stringify(state.messageInfos));
+            axios.put(`http://localhost:3000/api/message/${messageId}`, formData, {headers: {
+                'Content-Type': 'multipart/form-data'
+              }})
                 .then(response => {
                     console.log(response)
                     resolve(response);

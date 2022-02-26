@@ -38,7 +38,11 @@
                 <div class="card_body">
                     <div v-if="messageInfos.attachement !== null" class="files">
                         <img :src="messageInfos.attachement" />
-                        <input id="file" accept="image/*" @change="uploadImage" type="file"/>
+                        <label for="file" class="label-file">
+                            <i class="fas fa-paperclip"><span class="fichier">
+                            {{ (uploadFile) ? uploadFile.name : "Sélectionnez un fichier" }}
+                            </span></i></label>
+                        <input id="file" accept="image/*" @change="uploadImage" class="input-file" type="file"/>
                     </div>
                     <div class="text">
                         <input type="text" name="content" :value="messageInfos.content" @input="updateMessageField" />    
@@ -71,13 +75,17 @@ export default {
         console.log(this.$store.state.messages);
         console.log(this.$route.params.id);
     },
-    computed: mapState(["userInfos", "messageInfos"]),
+    computed: mapState(["userInfos", "messageInfos", "uploadFile"]),
     data: function () {
         return {
             mode : 'owner',
         };
     },
     methods: {
+        uploadImage(e) {
+            let image = e.target.files[0];
+            this.$store.commit("uploadImage", {image});
+        },
         //fonction qui récupère le nom des champs etr les valeurs pour les envoyer au mutateur
         updateMessageField(e) {
             this.$store.commit("updateMessageField", {
@@ -153,6 +161,14 @@ body {
     margin: 15px;
 }
 /**** INPUT ****/
+#messageUpdate input {
+  border-radius: 15px;
+  border: solid 1px transparent;
+  width: 100%;
+  height: 35px;
+  padding: 0px 10px 0px 10px;
+  background: #eff4f7;
+}
 #messageUpdate .files input {
     display: flex;
     align-self: flex-end;

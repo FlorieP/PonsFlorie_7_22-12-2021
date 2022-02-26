@@ -31,9 +31,10 @@
         <div class="avatar">
           <img :src="userInfos.avatar" />
           <label for="file" class="label-file">
-            <i class="fas fa-paperclip"><span class="fichier">{{ userInfos.avatar }}</span></i></label>
+            <i class="fas fa-paperclip"><span class="fichier">
+              {{ (uploadFile) ? uploadFile.name : "Sélectionnez un fichier" }}
+            </span></i></label>
           <input id="file" accept="image/*" @change="uploadImage" class="input-file" type="file"/>
-          <!--@change="uploadImage()-->
         </div>
         <!---------- Infos ---------->
         <div class="infos">
@@ -71,17 +72,16 @@ export default {
     return {
     };
   },
-  computed: mapState(["userInfos"]),
+  computed: mapState(["userInfos", "uploadFile"]),
   methods: {
     modifyProfile: function () {
       this.$store.dispatch("modifyProfile");
       this.$router.push("/profile");
     },
-    /*uploadImage(e) {
+    uploadImage(e) {
       let image = e.target.files[0];
-      let imageUrl =URL.createObjectURL(image);
-      this.$store.commit("uploadImage", {imageUrl});
-    },*/
+      this.$store.commit("uploadImage", {image});
+    },
     //fonction qui récupère le nom des champs etr les valeurs pour les envoyer au mutateur
     updateUserField(e) {
       this.$store.commit("updateUserField", {

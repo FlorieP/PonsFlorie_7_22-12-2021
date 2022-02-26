@@ -38,8 +38,11 @@
           </div>
           <!---------- Boutons ---------->
           <div class="footer">
-            <label for="file" class="label-file"><i class="fas fa-paperclip"><span class="fichier">Aucun fichier</span></i></label>
-            <input accept="image/*" @change="uploadImage()" class="input-file" type="file"/>
+            <label for="file" class="label-file">
+            <i class="fas fa-paperclip"><span class="fichier">
+              {{ (uploadFile) ? uploadFile.name : "Sélectionnez un fichier" }}
+            </span></i></label>
+          <input id="file" accept="image/*" @change="uploadImage" class="input-file" type="file"/>
             <button @click="newMessage()" class="publier">Publier</button>
           </div>
         </div>
@@ -181,7 +184,7 @@ export default {
     this.$store.dispatch("getAllMessages");
     console.log(this.$store.state.messages);	
   },
-  computed: mapState(["userInfos", "messages"]),
+  computed: mapState(["userInfos", "messages", "uploadFile"]),
   data: function () {
     return {
       showComments: false,
@@ -195,6 +198,11 @@ export default {
     switchComments: function () {
       this.showComments = true;
     },
+    uploadImage(e) {
+      let image = e.target.files[0];
+      //let imageUrl = URL.createObjectURL(image);
+      this.$store.commit("uploadImage", {image});
+    },    
     //Creation d'un nouveau message
     newMessage: function () {
       this.$store
@@ -202,7 +210,7 @@ export default {
           content: this.content,
           userId: this.$store.state.user.userId,
         })
-        this.$router.go()	// Refreshes page
+        //this.$router.go()	// Refreshes page
         .then(
           (response) => {
             console.log(response);

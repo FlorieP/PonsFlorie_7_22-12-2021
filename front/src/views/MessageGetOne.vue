@@ -31,7 +31,7 @@
             <p>{{messageInfos.User.firstname}} {{messageInfos.User.lastname}}</p>
           </div>
           <div class="when">
-            <p>{{messageInfos.createdAt}}</p>
+            <p>{{humanizeDate(messageInfos.createdAt)}}</p>
           </div>
         </div>
         <!---------- Corps du messages ---------->
@@ -53,11 +53,11 @@
           <div class="comment">
             <p>
               <i class="fas fa-comments"></i>
-              <span class="number">2</span>
+              <span class="number">0</span>
             </p>
           </div>
           <div class="like">
-            <p><i class="fas fa-heart"></i> <span class="number">6</span></p>
+            <p><i class="fas fa-heart"></i> <span class="number">0</span></p>
             <!--<p><i class="fas fa-heart-broken"></i> <span class="number">2</span></p>-->
           </div>
         </div>
@@ -148,7 +148,8 @@ export default {
     return {
       mode : 'owner',
       commentMode : 'Comment',
-      content: ''
+      content: '',
+      date: ''
     };
   },
   methods: {
@@ -322,6 +323,17 @@ body {
   width: 100%;
   height: 40px;
   background: white;
+}
+#getOneMessage .publier {
+  background: #1976d2;
+  color: white;
+  border-radius: 15px;
+  border: none;
+  padding: 8px;
+  margin-top: 10px;
+}
+#getOneMessage .publier button {
+width: auto;
 }
 /**** COMMENTAIRE HEADER ****/
 #getOneMessage .comments .comments_header {

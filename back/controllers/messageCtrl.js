@@ -27,9 +27,10 @@ exports.createMessage = (req, res) => {
       else {
         attachement = req.body.attachement;
       }
+      const messageInfos = JSON.parse(req.body.messageInfos)
       Message.create({
         include: [{ model: User }],
-        content: req.body.content,
+        content: messageInfos.content,
         attachement: attachement,
         UserId: user.id
       })
@@ -59,7 +60,7 @@ exports.createMessage = (req, res) => {
     //fonction find qui permet de trouver un message
     Message.findOne({ 
       where: { id: req.params.id } ,
-      include: [ User]
+      include: [ User, Comment, Like]
     })
       .then((response) => res.status(200).json(response))
       .catch(error => res.status(400).json({ message: error.message }));
@@ -76,11 +77,12 @@ exports.createMessage = (req, res) => {
           res.status(403).json({ message: "Seul l'utilisateur qui a créé le message peut le modifier" })
             .catch((error) => res.status(400).json({ message: error.message }));
         } else {
+          const messageInfos = JSON.parse(req.body.messageInfos)
           const messageObject = req.file ?
             {
-              ...JSON.parse(req.body.message),
+              ...messageInfos,
               attachement: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-            } : { ...req.body };
+            } : { ...messageInfos};
           //fonction qui permet de mettre à jour un message
           Message.update({ ...messageObject, id: req.params.id }, { where: { id: req.params.id } })
             //modification du message via le paramètre id 
