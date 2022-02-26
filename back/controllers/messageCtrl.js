@@ -27,10 +27,9 @@ exports.createMessage = (req, res) => {
       else {
         attachement = req.body.attachement;
       }
-      const messageInfos = JSON.parse(req.body.messageInfos)
       Message.create({
         include: [{ model: User }],
-        content: messageInfos.content,
+        content: req.body.content,
         attachement: attachement,
         UserId: user.id
       })
@@ -77,12 +76,11 @@ exports.createMessage = (req, res) => {
           res.status(403).json({ message: "Seul l'utilisateur qui a créé le message peut le modifier" })
             .catch((error) => res.status(400).json({ message: error.message }));
         } else {
-          const messageInfos = JSON.parse(req.body.messageInfos)
           const messageObject = req.file ?
             {
-              ...messageInfos,
+              ...req.body,
               attachement: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-            } : { ...messageInfos};
+            } : { ...req.body};
           //fonction qui permet de mettre à jour un message
           Message.update({ ...messageObject, id: req.params.id }, { where: { id: req.params.id } })
             //modification du message via le paramètre id 

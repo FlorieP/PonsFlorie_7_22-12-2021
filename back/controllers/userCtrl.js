@@ -153,12 +153,11 @@ exports.modify = (req, res, next) => {
                 res.status(403).json({ message: "Seul l'utilisateur concerné peut modifier son profil" })
                     .catch((error) => res.status(400).json({ message: error.message }));
             } else {
-                const userInfos = JSON.parse(req.body.userInfos)
                 const userObject = req.file ?
                     {
-                        ...userInfos,
+                        ...req.body,
                         avatar: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
-                    } : { ...userInfos }
+                    } : { ...req.body }
                 User.update({ ...userObject, id: req.params.id }, { where: { id: req.params.id } })
                     .then(() => res.status(200).json({ ...userObject }))
                     .catch(error => res.status(400).json({ error }))

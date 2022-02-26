@@ -182,14 +182,15 @@ const store = createStore({
         },
         //Fonction de modification du profil utilisateur
         modifyProfile : ({commit, state}) => {
-            console.log(state.user.userId)
-            console.log(commit)
             let userId = state.user.userId;
             let formData = new FormData();
             if (state.uploadFile) {
                 formData.append("image", state.uploadFile);
             }
-            formData.append("userInfos", JSON.stringify(state.userInfos));
+            for (let [fieldName, fieldValue] of Object.entries(state.userInfos))
+            {
+                formData.append(fieldName, fieldValue); //push les valeurs
+            }
             return new Promise ((resolve, reject) => {
                 commit;
                 axios.put(`http://localhost:3000/api/user/profil/${userId}`, formData, {headers: {
@@ -257,7 +258,9 @@ const store = createStore({
                 if (state.uploadFile) {
                     formData.append("image", state.uploadFile);
                 }
-                formData.append("messageInfos", JSON.stringify(messageInfos));
+                for (let [fieldName, fieldValue] of Object.entries(messageInfos)) {
+                    formData.append(fieldName, fieldValue);
+                }
                 axios.post('http://localhost:3000/api/message/new', formData, {headers: {
                     'Content-Type': 'multipart/form-data'
                   }})
@@ -276,16 +279,15 @@ const store = createStore({
         },
         //Fonction de modification d'un message
         updateMessage : ({commit, state}, messageId) => {
-            console.log(commit)
-            console.log('id du message est :' + messageId)
-            console.log('bouh 2' + state.messageInfos)
-            return new Promise ((resolve, reject) => {
-            commit;
             let formData = new FormData();
             if (state.uploadFile) {
                 formData.append("image", state.uploadFile);
             }
-            formData.append("messageInfos", JSON.stringify(state.messageInfos));
+            for (let [fieldName, fieldValue] of Object.entries(state.messageInfos)) {
+                formData.append(fieldName, fieldValue);
+            }
+            return new Promise ((resolve, reject) => {
+            commit;
             axios.put(`http://localhost:3000/api/message/${messageId}`, formData, {headers: {
                 'Content-Type': 'multipart/form-data'
               }})

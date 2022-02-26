@@ -175,7 +175,6 @@ import { mapState } from "vuex";
 
 export default {
   mounted: function () {
-    //console.log(this.$store.state.user);
     if (this.$store.state.user.userId == -1) {
       this.$router.push("/login");
       return;
@@ -200,7 +199,6 @@ export default {
     },
     uploadImage(e) {
       let image = e.target.files[0];
-      //let imageUrl = URL.createObjectURL(image);
       this.$store.commit("uploadImage", {image});
     },    
     //Creation d'un nouveau message
@@ -210,7 +208,7 @@ export default {
           content: this.content,
           userId: this.$store.state.user.userId,
         })
-        //this.$router.go()	// Refreshes page
+        this.$router.go()	// Refreshes page
         .then(
           (response) => {
             console.log(response);
