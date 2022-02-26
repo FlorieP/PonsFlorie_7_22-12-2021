@@ -31,7 +31,7 @@
                         <p>{{messageInfos.User.firstname}} {{messageInfos.User.lastname}}</p>
                      </div>
                     <div class="when">
-                        <p>{{messageInfos.createdAt}}</p>
+                        <p>{{humanizeDate(messageInfos.createdAt)}}</p>
                     </div>
                 </div>
                 <!---------- Corps du messages ---------->
@@ -62,6 +62,7 @@
 
 <script>
 import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
     mounted: function () {
@@ -75,7 +76,16 @@ export default {
         console.log(this.$store.state.messages);
         console.log(this.$route.params.id);
     },
-    computed: mapState(["userInfos", "messageInfos", "uploadFile"]),
+    computed: {
+        ...mapState([
+            "userInfos", 
+            "messageInfos", 
+            "uploadFile"
+        ]),
+        ...mapGetters([
+            "humanizeDate"
+        ]),
+    },
     data: function () {
         return {
             mode : 'owner',

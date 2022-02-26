@@ -58,7 +58,7 @@
             <p>{{message.User.firstname}} {{message.User.lastname}}</p>
           </div>
           <div class="when">
-            <p>Date | Heure</p>
+            <p>{{humanizeDate(message.createdAt)}}</p>
           </div>
         </div>
         <!---------- Corps du messages ---------->
@@ -72,7 +72,7 @@
           </div>
           </a>
           <!---------- Modif et Suppression ---------->
-          <div v-if="mode == 'owner'" class="buttons">
+          <div v-if="message.owner" class="buttons">
              <a :href="'/MessageUpdate/' + message.id"><i class="far fa-edit"></i></a>
              <a :href="'/MessageDelete/' + message.id"><i class="far fa-trash-alt"></i></a>
           </div>
@@ -83,84 +83,53 @@
             <p><i class="fas fa-comments"></i> <span class="number">{{message.Comments.length}}</span></p>
           </div>
           <div class="like">
-            <p><i class="fas fa-heart"></i> <span class="number">{{message.Likes.length}}</span></p>
-            <!--<p><i class="fas fa-heart-broken"></i> <span class="number">2</span></p>-->
-          </div>
-        </div>
-      </div>
-      <!---------- Messages ----------->
-      <div class="card">
-        <!---------- Entête messages ---------->
-        <div class="card_header">
-          <div class="avatar">
-            <img src="../assets/avatar-man.png" />
-          </div>
-          <div class="name">
-            <p>Nom Prénom</p>
-          </div>
-          <div class="when">
-            <p>Date | Heure</p>
-          </div>
-        </div>
-        <!---------- Corps du messages ---------->
-        <div class="card_body">
-          <div class="files">
-            <img src="../assets/flower.jpg" />
-          </div>
-          <div class="text">
-            <p>Mon super texte qui détaille ma super image.</p>
-          </div>
-        </div>
-        <!---------- Icons ---------->
-        <div class="card_footer">
-          <div class="comment">
-            <p>
-              <i @click="switchComments()" class="fas fa-comments"></i>
-              <span class="number">2</span>
-            </p>
-          </div>
-          <div class="like">
-            <p><i class="fas fa-heart"></i> <span class="number">6</span></p>
-            <p>
-              <i class="fas fa-heart-broken"></i> <span class="number">2</span>
-            </p>
+            <p><i @click="likeClick($event, message.id)" class="fas fa-heart" v-bind:class="{ liked: message.liked }" ></i> <span class="number">{{message.Likes.length}}</span></p>
           </div>
         </div>
         <!---------- Commentaires ---------->
-        <div v-show="showComments === true" class="card_comments">
+        <div class="card_comments">
+          <!---------- Nouveau Commentaires ---------->
           <div class="comments">
-            <!---------- Entête messages ---------->
             <div class="comments_header">
               <div class="avatar">
-                <img src="../assets/avatar-woman.png" />
+                <img :src="userInfos.avatar"/>
               </div>
               <div class="comments_body">
-                <div class="who">
-                  <p>Publié par <span class="name">Nom Prénom</span> le Date à Heure</p>
-                </div>
-                <div class="text">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac rhoncus nibh, sed placerat nisl. Praesent nisi massa, varius tincidunt erat accumsan, molestie lobortis orci. Etiam in magna ut neque congue luctus. Pellentesque dignissim laoreet luct.</p>
-                </div>
-              </div>
-              <div v-if="mode == 'owner'" class="buttons">
-                <i class="far fa-edit"></i>
-                <i class="far fa-trash-alt"></i>
+                <input v-model="content" type="textarea" placeholder="  Quoi de neuf docteur ?"/>
+                <button @click="newComment()" class="publier">Publier</button>
               </div>
             </div>
           </div>
-          <div class="comments">
-            <!---------- Entête messages ---------->
+          <!---------- Commentaires ---------->
+          <div v-for="comment in comments" :key="comment.id" class="comments">
             <div class="comments_header">
               <div class="avatar">
-                <img src="../assets/avatar-woman.png" />
+                <img :src="comment.User.avatar" />
               </div>
-              <div class="comments_body">
+              <div v-if="commentMode === 'updateComment'" class=" comments_body">
+                  <input type="text" name="content" :value="comment.content" @input="updateCommentField"/> 
+                  <div class="buttons">
+                    <button @click="updateComment(comment.id)" class="confirm">Sauvegarder</button>
+                  </div>
+              </div> 
+              <div v-else-if="commentMode === 'deleteComment'" class="deleteMode comments_body">
+                <p>Voulez-vous vraiment supprimé votre commentaire ?</p>
+                <div class="buttons">
+                  <button @click="deleteComment(comment.id)" class="confirm">Confirmer</button>
+                  <button @click="getMode()" class="cancel">Annuler</button>
+                </div>
+              </div>
+              <div v-else class="comments_body">
                 <div class="who">
-                  <p>Publié par <span class="name">Nom Prénom</span> le Date à Heure</p>
+                  <p>Publié par <span class="name">{{comment.User.firstname}} {{comment.User.lastname}}</span> le {{humanizeDate(comment.createdAt)}}</p>
                 </div>
                 <div class="text">
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac rhoncus nibh, sed placerat nisl. Praesent nisi massa, varius tincidunt erat accumsan, molestie lobortis orci. Etiam in magna ut neque congue luctus. Pellentesque dignissim laoreet luct.</p>
+                  <p>{{comment.content}}</p>
                 </div>
+              </div>
+              <div v-if="comment.owner" class="buttons">
+                <i @click="updateMode()" class="far fa-edit"></i>
+                <i @click="deleteMode()" class="far fa-trash-alt"></i>
               </div>
             </div>
           </div>
@@ -172,6 +141,7 @@
 
 <script>
 import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   mounted: function () {
@@ -181,15 +151,27 @@ export default {
     }
     this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
     this.$store.dispatch("getAllMessages");
-    console.log(this.$store.state.messages);	
+    this.$store.dispatch("getAllComments", this.$store.state.messages.id);
   },
-  computed: mapState(["userInfos", "messages", "uploadFile"]),
+    computed: {
+        ...mapState([
+            "userInfos", 
+            "messages", 
+            "comments",
+            "uploadFile"
+        ]),
+        ...mapGetters([
+            "humanizeDate"
+        ]),
+    },
   data: function () {
     return {
       showComments: false,
       addPicture: false,
-      mode: "owner",
       previewImage: null,
+      commentMode : 'Comment',
+      content: '',
+      date: ''
     };
   },
   methods: {
@@ -218,6 +200,65 @@ export default {
           }
         );
     },
+    //Creation d'un nouveau message
+    newComment: function () {
+      console.log('fonction new');
+       this.$store
+        .dispatch("newComment", {
+          valeurContent: this.content,
+          messageId : this.$route.params.id,
+        })
+        .then(
+          (response) => {
+            console.log(response);
+            this.$router.go()	// Refreshes page
+          },
+          (error) => {
+            console.log(error.message);
+          }
+        ); 
+    },
+    //Modification d'un commentaire
+    updateComment: function (commentId) {
+      console.log('fonction update');
+        console.log("Messageid " + this.$route.params.id + " Comment id " + commentId);
+        this.$store.dispatch("updateComment", {
+          messageId :this.$route.params.id, 
+          commentId : commentId});
+        this.commentMode = "Comment";
+        this.$router.go()	// Refreshes page
+    },
+    //Suppression d'un commentaire
+    deleteComment: function (commentId) {
+        console.log('fonction delete');
+        this.$store.dispatch("deleteComment", {
+          messageId :this.$route.params.id, 
+          commentId : commentId});
+          this.commentMode = "Comment";
+          this.$router.go()	// Refreshes page
+    },
+    //Changement de vue de comment
+    getMode: function () {
+        this.commentMode = 'Comment';
+    },
+    updateMode: function () {
+        this.commentMode = 'updateComment';
+    },
+    deleteMode: function () {
+        this.commentMode = 'deleteComment';
+    },   
+
+    //Like / Unlike
+    likeClick : function (e, messageId) {
+      console.log('likeClick');
+      console.log(e);
+      console.log(messageId);
+      if (e.target.classList.contains('liked')) {
+        console.log('todo : to dislike');
+      } else {
+        console.log('todo : to like');
+      }
+    }
   },
 };
 </script>
@@ -373,10 +414,10 @@ body {
 #wall .card_footer .fa-comments {
   color: #1976d2;
 }
-#wall .card_footer .fa-heart:hover {
-  color: #1976d2;
+#wall .card_footer .fa-heart {
+  cursor: pointer;
 }
-#wall .card_footer .fa-heart-broken:hover {
+#wall .card_footer .fa-heart.liked {
   color: #1976d2;
 }
 #wall .card_footer .number {
@@ -384,6 +425,7 @@ body {
   color: grey;
   padding-left: 5px;
 }
+
 /********COMMENTAIRES*********/
 #wall .card_comments {
   display: flex;
@@ -401,12 +443,31 @@ body {
   border-radius: 16px;
   margin-bottom: 5px;
 }
-/**** COMMENT HEADER ****/
+/**** INPUT NOUVEAU COMMENTAIRE ****/
+#wall .comments input {
+  border-radius: 15px;
+  border: solid 1px transparent;
+  width: 100%;
+  height: 40px;
+  background: white;
+}
+#wall .publier {
+  display: flex;
+  flex-direction: row;
+  background: #1976d2;
+  color: white;
+  border-radius: 15px;
+  border: none;
+  padding: 8px;
+  margin-top: 10px;
+  align-self: flex-end;
+}
+/**** COMMENTAIRE HEADER ****/
 #wall .comments .comments_header {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   margin: 10px;
 }
 #wall .comments .comments_header img {
@@ -415,12 +476,16 @@ body {
   border-radius: 50%;
   object-fit: cover;
 }
-/**** COMMENT BODY ****/
+/**** COMMENTAIRE BODY ****/ 
 #wall .comments .comments_body p {
   margin-block: 0px;
+  width: 100%;
 }
 #wall .comments .comments_body {
+  display: flex;
+  flex-direction: column;
   margin: 5px 5px 5px 15px;
+  flex: 80%;
 }
 #wall .comments .comments_body .who {
   color: grey;
@@ -433,14 +498,30 @@ body {
 #wall .comments .comments_body .text {
   font-size: 13px;
 }
-
+/******* SUPPRESSION ******/
+#wall .deleteMode p {
+    padding: 0px 5px 0px 5px ;
+    font-size: 14px;
+    margin: 15px 2px 10px 5px;
+    text-align: center;
+}
+#wall .comments_body .buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
 /************* BOUTONS MODIF ET DELETE ************/
 #wall .buttons i {
   font-size: 15px;
   margin: 15px;
   color: grey;
 }
-
+#getOneMessage .comments .buttons {
+  display: flex;
+  flex-direction: column;
+}
 #wall .buttons i:hover {
   color: #1976d2;
 }

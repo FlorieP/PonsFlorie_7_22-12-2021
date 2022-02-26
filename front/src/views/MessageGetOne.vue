@@ -44,33 +44,28 @@
           </div>
         </div>
         <!---------- Modif et Suppression ---------->
-        <div v-if="mode == 'owner'" class="buttons buttons_message">
+        <div v-if="messageInfos.owner" class="buttons buttons_message">
           <a :href="'/messageUpdate/' + this.$route.params.id"><i class="far fa-edit"></i></a>
           <a :href="'/messageDelete/' + this.$route.params.id"><i class="far fa-trash-alt"></i></a>
         </div>
         <!---------- Icons ---------->
         <div class="card_footer">
           <div class="comment">
-            <p>
-              <i class="fas fa-comments"></i>
-              <span class="number">0</span>
-            </p>
+            <p><i class="fas fa-comments"></i> <span class="number">0</span></p>
           </div>
           <div class="like">
-            <p><i class="fas fa-heart"></i> <span class="number">0</span></p>
-            <!--<p><i class="fas fa-heart-broken"></i> <span class="number">2</span></p>-->
+            <p><i @click="likeClick($event, messageInfos.id)" class="fas fa-heart" v-bind:class="{ liked: messageInfos.liked }" ></i> <span class="number">0</span></p>
           </div>
         </div>
         <!---------- Commentaires ---------->
         <div class="card_comments">
           <!---------- Nouveau Commentaires ---------->
           <div class="comments">
-            <!---------- Entête messages ---------->
             <div class="comments_header">
               <div class="avatar">
-                <img src="../assets/avatar-woman.png"/>
+                <img :src="userInfos.avatar"/>
               </div>
-              <div class="comments comments_body">
+              <div class="comments_body">
                 <input v-model="content" type="textarea" placeholder="  Quoi de neuf docteur ?"/>
                 <button @click="newComment()" class="publier">Publier</button>
               </div>
@@ -78,7 +73,6 @@
           </div>
           <!---------- Commentaires ---------->
           <div v-for="comment in comments" :key="comment.id" class="comments">
-            <!---------- Entête messages ---------->
             <div class="comments_header">
               <div class="avatar">
                 <img :src="comment.User.avatar" />
@@ -98,13 +92,13 @@
               </div>
               <div v-else class="comments_body">
                 <div class="who">
-                  <p>Publié par <span class="name">{{comment.User.firstname}} {{comment.User.lastname}}</span> le {{comment.createdAt}}</p>
+                  <p>Publié par <span class="name">{{comment.User.firstname}} {{comment.User.lastname}}</span> le {{humanizeDate(comment.createdAt)}}</p>
                 </div>
                 <div class="text">
                   <p>{{comment.content}}</p>
                 </div>
               </div>
-              <div v-if="mode == 'owner'" class="buttons">
+              <div v-if="comment.owner" class="buttons">
                 <i @click="updateMode()" class="far fa-edit"></i>
                 <i @click="deleteMode()" class="far fa-trash-alt"></i>
               </div>
@@ -146,7 +140,6 @@ export default {
   },
   data: function () {
     return {
-      mode : 'owner',
       commentMode : 'Comment',
       content: '',
       date: ''
@@ -197,7 +190,7 @@ export default {
           this.commentMode = "Comment";
           this.$router.go()	// Refreshes page
     },
-    //Changement de
+    //Changement de vue de comment
     getMode: function () {
         this.commentMode = 'Comment';
     },
@@ -288,13 +281,13 @@ body {
 #getOneMessage .card_footer .fa-comments {
   color: #1976d2;
 }
-#getOneMessage .card_footer .fa-heart:hover {
+#getOneMessage .card_footer .fa-heart {
+  cursor: pointer;
+}
+#getOneMessage .card_footer .fa-heart.liked {
   color: #1976d2;
 }
-#getOneMessage .card_footer .fa-heart-broken:hover {
-  color: #1976d2;
-}
-#getOneMessage .card_footer .number {
+ #getOneMessage.card_footer .number {
   font-size: 15px;
   color: grey;
   padding-left: 5px;
@@ -325,15 +318,15 @@ body {
   background: white;
 }
 #getOneMessage .publier {
+  display: flex;
+  flex-direction: row;
   background: #1976d2;
   color: white;
   border-radius: 15px;
   border: none;
   padding: 8px;
   margin-top: 10px;
-}
-#getOneMessage .publier button {
-width: auto;
+  align-self: flex-end;
 }
 /**** COMMENTAIRE HEADER ****/
 #getOneMessage .comments .comments_header {
@@ -355,6 +348,8 @@ width: auto;
   width: 100%;
 }
 #getOneMessage .comments .comments_body {
+  display: flex;
+  flex-direction: column;
   margin: 5px 5px 5px 15px;
   flex: 80%;
 }
@@ -382,7 +377,7 @@ width: auto;
 }
 #getOneMessage .buttons i {
   font-size: 15px;
-  margin: 15px;
+  margin: 8px 15px 8px 8px;
   color: grey;
 }
 #getOneMessage .buttons i:hover {

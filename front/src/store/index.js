@@ -106,13 +106,40 @@ const store = createStore({
             console.log(fieldName),
             console.log(newValue)
         },    
-        //MAJ du state du tableau messages
+        //MAJ du state du tableau messages + affichage des likes du User connecté
         messages: function(state, messages) {
+            const loggedUserId = state.user.userId;
+            for (const message of messages) {
+                //détrerminé si l'utilisateur à déjà liké un post (affichage couleur)
+                let messageLikedByUser = false;
+                for (const like of message.Likes) {
+                    if (like.userId == loggedUserId) {
+                         messageLikedByUser = true;
+                         break;
+                    }
+                }
+                // Champ éphémère pour l'interface (on veut savoir si message "liké" par l'utilisateur dans Accueil.vue)
+                message.liked = messageLikedByUser;
+                // Champ éphémère pour affichage des boutons de modif de l'user connecté
+                message.owner = message.userId == loggedUserId;
+            }
             state.messages = messages;
         },
         //MAJ du state d'un message
         messageInfos: function(state, messageInfos) {
+            const loggedUserId = state.user.userId;
             state.messageInfos = messageInfos;
+             let messageLikedByUser = false;
+                for (const like of messageInfos.Likes) {
+                    if (like.userId == loggedUserId) {
+                         messageLikedByUser = true;
+                         break;
+                    }
+                }
+                // Champ éphémère pour l'interface (on veut savoir si message "liké" par l'utilisateur dans Accueil.vue)
+                messageInfos.liked = messageLikedByUser; 
+            // Champ éphémère pour affichage des boutons de modif de l'user connecté
+            messageInfos.owner = messageInfos.userId == loggedUserId;            
         },
         ////////////////// MUTATIONS DE COMMENTAIRE ////////////////// 
         //MAJ du state messageInfos après MAJ updateMessage
@@ -123,7 +150,12 @@ const store = createStore({
         },    
         //MAJ du state du tableau messages
         comments: function(state, comments) {
+            const loggedUserId = state.user.userId;
             state.comments = comments;
+            for (const comment of comments) {
+                // Champ éphémère pour affichage des boutons de modif de l'user connecté
+                comment.owner = comment.userId == loggedUserId;  
+            } 
         },
     },
     actions: {
