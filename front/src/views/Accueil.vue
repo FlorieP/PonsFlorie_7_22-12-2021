@@ -80,31 +80,31 @@
         <!---------- Icons ---------->
         <div class="card_footer">
           <div class="comment">
-            <p><i class="fas fa-comments"></i> <span class="number">{{message.Comments.length}}</span></p>
+            <p><i @click="switchComments" class="fas fa-comments"></i> <span class="number">{{message.Comments.length}}</span></p>
           </div>
           <div class="like">
             <p><i @click="likeClick($event, message.id)" class="fas fa-heart" v-bind:class="{ liked: message.liked }" ></i> <span class="number">{{message.Likes.length}}</span></p>
           </div>
         </div>
         <!---------- Commentaires ---------->
-        <div class="card_comments">
+        <div v-show="showComments ===true" class="card_comments">
           <!---------- Nouveau Commentaires ---------->
-          <div class="comments">
+          <div v class="comments">
             <div class="comments_header">
               <div class="avatar">
                 <img :src="userInfos.avatar"/>
               </div>
               <div class="comments_body">
                 <input v-model="content" type="textarea" placeholder="  Quoi de neuf docteur ?"/>
-                <button @click="newComment()" class="publier">Publier</button>
+                <button @click="newComment(message.id)" class="publier">Publier</button>
               </div>
             </div>
           </div>
           <!---------- Commentaires ---------->
-          <div v-for="comment in comments" :key="comment.id" class="comments">
+          <div v-for="comment in message.Comments" :key="comment.id" class="comments">
             <div class="comments_header">
               <div class="avatar">
-                <img :src="comment.User.avatar" />
+                <img src="" />
               </div>
               <div v-if="commentMode === 'updateComment'" class=" comments_body">
                   <input type="text" name="content" :value="comment.content" @input="updateCommentField"/> 
@@ -121,7 +121,7 @@
               </div>
               <div v-else class="comments_body">
                 <div class="who">
-                  <p>Publié par <span class="name">{{comment.User.firstname}} {{comment.User.lastname}}</span> le {{humanizeDate(comment.createdAt)}}</p>
+                  <p>Publié par <span class="name">Nom Prénom</span> le {{humanizeDate(comment.createdAt)}}</p>
                 </div>
                 <div class="text">
                   <p>{{comment.content}}</p>
@@ -177,7 +177,11 @@ export default {
   methods: {
     //Afficharge des commentaires
     switchComments: function () {
-      this.showComments = true;
+      if(this.showComments == false) {
+        this.showComments = true;
+    } else {
+        this.showComments = false;
+    }
     },
     uploadImage(e) {
       let image = e.target.files[0];
@@ -201,12 +205,11 @@ export default {
         );
     },
     //Creation d'un nouveau message
-    newComment: function () {
+    newComment: function (messageId) {
       console.log('fonction new');
-       this.$store
-        .dispatch("newComment", {
+       this.$store.dispatch("newComment", {
           valeurContent: this.content,
-          messageId : this.$route.params.id,
+          messageId : messageId,
         })
         .then(
           (response) => {
