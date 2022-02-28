@@ -40,9 +40,10 @@
                         <img :src="messageInfos.attachement" />
                         <label for="file" class="label-file">
                             <i class="fas fa-paperclip"><span class="fichier">
-                            {{ (uploadFile) ? uploadFile.name : "Sélectionnez un fichier" }}
-                            </span></i></label>
-                        <input id="file" accept="image/*" @change="uploadImage" class="input-file" type="file"/>
+                                {{ (uploadFile) ? uploadFile.name : "Sélectionnez un fichier" }}
+                            </span></i>
+                        </label>
+                        <input id="file" accept="image/*" @change="uploadImage" class="input-file" type="file"/>              
                     </div>
                     <div class="text">
                         <input type="text" name="content" :value="messageInfos.content" @input="updateMessageField" />    
@@ -158,32 +159,41 @@ body {
     color: grey;
     font-size: 12px;
 }
+#messageUpdate .card_body  {
+    display: flex;
+    flex-direction: column;
+}
 #messageUpdate .card_body img {
     width: 100%;
     height: 400px;
     object-fit: cover;
 }
-#messageUpdate .files {
+#messageUpdate .card_body .files {
     display: flex;
     flex-direction: column;
+    align-items: flex-end;
 }
 #messageUpdate .card_body .text {
     margin: 15px;
 }
 /**** INPUT ****/
-#messageUpdate input {
-  border-radius: 15px;
-  border: solid 1px transparent;
-  width: 100%;
-  height: 35px;
-  padding: 0px 10px 0px 10px;
-  background: #eff4f7;
+#messageUpdate .card_body .label-file {
+    margin: 20px;
 }
-#messageUpdate .files input {
-    display: flex;
-    align-self: flex-end;
-    margin: 15px;
+#messageUpdate .card_body .input-file {
+  display: none;
 }
+#messageUpdate .card_body i {
+  font-size: 18px;
+  color: #1976d2;
+}
+#messageUpdate .card_body .fichier {
+  color: grey;
+  font-size: 12px;
+  font-weight: 300;
+  margin-left: 8px;
+}
+
 #messageUpdate .text input {
     border-radius: 15px;
     border: solid 1px transparent;

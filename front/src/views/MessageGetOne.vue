@@ -99,8 +99,8 @@
                 </div>
               </div>
               <div v-if="comment.owner" class="buttons">
-                <i @click="updateMode()" class="far fa-edit"></i>
-                <i @click="deleteMode()" class="far fa-trash-alt"></i>
+                <i @click="updateMode" class="far fa-edit"></i>
+                <i @click="deleteMode" class="far fa-trash-alt"></i>
               </div>
             </div>
           </div>
