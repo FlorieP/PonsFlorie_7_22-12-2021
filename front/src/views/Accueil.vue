@@ -80,14 +80,14 @@
         <!---------- Icons ---------->
         <div class="card_footer">
           <div class="comment">
-            <p><i @click="switchComments" class="fas fa-comments"></i> <span class="number">{{message.Comments.length}}</span></p>
+            <p><i @click="switchComments == false? showComments(message.id, true):showComments(message.id, false)" class="fas fa-comments"></i> <span class="number">{{message.Comments.length}}</span></p>
           </div>
           <div class="like">
             <p><i @click="likeClick($event, message.id)" class="fas fa-heart" v-bind:class="{ liked: message.liked }" ></i> <span class="number">{{message.Likes.length}}</span></p>
           </div>
         </div>
         <!---------- Commentaires ---------->
-        <div v-show="showComments ===true" class="card_comments">
+        <div v-show="switchComments == true" class="card_comments">
           <!---------- Nouveau Commentaires ---------->
           <div v class="comments">
             <div class="comments_header">
@@ -166,7 +166,7 @@ export default {
     },
   data: function () {
     return {
-      showComments: false,
+      switchComments : false,
       addPicture: false,
       previewImage: null,
       commentMode : 'Comment',
@@ -176,12 +176,17 @@ export default {
   },
   methods: {
     //Afficharge des commentaires
-    switchComments: function () {
-      if(this.showComments == false) {
-        this.showComments = true;
-    } else {
-        this.showComments = false;
-    }
+    showComments: function (messageId, status) {
+      this.statusShowComments[messageId] = false;
+      if (status) {
+        this.$set(this.statusShowComments, messageId = true);
+        console.log(this.statusSwitchComments);
+        this.switchComments = true;
+      } else {
+        this.statusShowComments[messageId] = false;
+        console.log(this.statusShowComments);
+        this.switchComments = false;
+      }
     },
     uploadImage(e) {
       let image = e.target.files[0];
@@ -258,8 +263,28 @@ export default {
       console.log(messageId);
       if (e.target.classList.contains('liked')) {
         console.log('todo : to dislike');
+        this.$store.dispatch("unlike", messageId)
+        this.$router.go()	// Refreshes page
+        .then(
+          (response) => {
+            console.log(response);
+          },
+          (error) => {
+            console.log(error.message);
+          }
+        );
       } else {
         console.log('todo : to like');
+        this.$store.dispatch("like", messageId)
+        this.$router.go()	// Refreshes page
+        .then(
+          (response) => {
+            console.log(response);
+          },
+          (error) => {
+            console.log(error.message);
+          }
+        );
       }
     }
   },

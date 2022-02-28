@@ -50,7 +50,9 @@ const store = createStore({
                 avatar:'', 
                 firstname :'', 
                 lastname: '',
-            }
+            },
+            Comments: [],
+            Likes: [],
          },
         //MESSAGE //
         //Tous les commentaires
@@ -128,7 +130,6 @@ const store = createStore({
         //MAJ du state d'un message
         messageInfos: function(state, messageInfos) {
             const loggedUserId = state.user.userId;
-            state.messageInfos = messageInfos;
              let messageLikedByUser = false;
                 for (const like of messageInfos.Likes) {
                     if (like.userId == loggedUserId) {
@@ -139,7 +140,9 @@ const store = createStore({
                 // Champ éphémère pour l'interface (on veut savoir si message "liké" par l'utilisateur dans Accueil.vue)
                 messageInfos.liked = messageLikedByUser; 
             // Champ éphémère pour affichage des boutons de modif de l'user connecté
-            messageInfos.owner = messageInfos.userId == loggedUserId;            
+            messageInfos.owner = messageInfos.userId == loggedUserId; 
+            
+            state.messageInfos = messageInfos;
         },
         ////////////////// MUTATIONS DE COMMENTAIRE ////////////////// 
         //MAJ du state messageInfos après MAJ updateMessage
@@ -415,6 +418,41 @@ const store = createStore({
                 })
             }) 
         },
+        ///////////////////  ACTIONS LIKE ////////////////// 
+        like : ({commit, state}, messageId) => {
+            console.log(commit)
+            console.log('Like ici')
+            console.log('id du message est :' + messageId + 'id du user est :' + state.user.userId)
+            return new Promise ((resolve, reject) => {
+                commit;
+                axios.post(`http://localhost:3000/api/message/${messageId}/like`)
+                .then(response => {
+                    console.log(response)
+                    resolve(response);
+                })
+               .catch(error => {
+                    console.log(error.message)
+                    reject(error.message);
+                })
+            }) 
+        },
+        unlike : ({commit, state}, messageId) => {
+            console.log(commit)
+            console.log('Unlike ici')
+            console.log('id du message est :' + messageId + 'id du user est :' + state.user.userId)
+            return new Promise ((resolve, reject) => {
+                commit;
+                axios.delete(`http://localhost:3000/api/message/${messageId}/like`)
+                .then(response => {
+                    console.log(response)
+                    resolve(response);
+                })
+               .catch(error => {
+                    console.log(error.message)
+                    reject(error.message);
+                })
+            }) 
+        }
     }   
 })
 

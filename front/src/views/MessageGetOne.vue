@@ -51,10 +51,10 @@
         <!---------- Icons ---------->
         <div class="card_footer">
           <div class="comment">
-            <p><i class="fas fa-comments"></i> <span class="number">0</span></p>
+            <p><i class="fas fa-comments"></i> <span class="number">{{messageInfos.Comments.length}}</span></p>
           </div>
           <div class="like">
-            <p><i @click="likeClick($event, messageInfos.id)" class="fas fa-heart" v-bind:class="{ liked: messageInfos.liked }" ></i> <span class="number">0</span></p>
+            <p><i @click="likeClick($event, messageInfos.id)" class="fas fa-heart" v-bind:class="{ liked: messageInfos.liked }" ></i> <span class="number">{{messageInfos.Likes.length}}</span></p>
           </div>
         </div>
         <!---------- Commentaires ---------->
@@ -116,7 +116,6 @@ import { mapGetters } from "vuex";
 
 export default {
   mounted: function () {
-    //console.log(this.$store.state.user);
     if (this.$store.state.user.userId == -1) {
       this.$router.push("/login");
       return;
@@ -124,9 +123,7 @@ export default {
       this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
       this.$store.dispatch("getOneMessage", this.$route.params.id);
       this.$store.dispatch("getAllComments", this.$route.params.id);
-      console.log(this.$store.state.messages);
-      console.log(this.$route.params.id);
-      console.log(this.$store.state.comments);
+      console.log(this.$store.state.messageInfos);
   },
   computed: {
     ...mapState([
@@ -199,7 +196,38 @@ export default {
     },
     deleteMode: function () {
         this.commentMode = 'deleteComment';
-    },         
+    }, 
+    //Like / Unlike
+    likeClick : function (e, messageId) {
+      console.log('likeClick');
+      console.log(e);
+      console.log(messageId);
+      if (e.target.classList.contains('liked')) {
+        console.log('todo : to dislike');
+        this.$store.dispatch('unlike', messageId)
+        this.$router.go()	// Refreshes page
+        .then(
+          (response) => {
+            console.log(response);
+          },
+          (error) => {
+            console.log(error.message);
+          }
+        );
+      } else {
+        console.log('todo : to like');
+        this.$store.dispatch('like', messageId)
+        this.$router.go()	// Refreshes page
+        .then(
+          (response) => {
+            console.log(response);
+          },
+          (error) => {
+            console.log(error.message);
+          }
+        );
+      }
+    }        
   },
 };
 </script>

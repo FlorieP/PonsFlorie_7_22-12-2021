@@ -15,7 +15,7 @@ exports.addLike = (req, res) => {
     let userId = token.getUserId(req);
     console.log(userId)
     console.log(req.params.id)
-    let like = Like.findOne({ where: { messageId: req.params.id, userId : userId }})
+    Like.findOne({ where: { messageId: req.params.id, userId : userId }})
         .then(like => {
             if (!like) {
                Like.create({
