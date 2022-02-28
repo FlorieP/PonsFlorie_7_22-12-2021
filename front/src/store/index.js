@@ -139,10 +139,10 @@ const store = createStore({
                 }
                 // Champ éphémère pour l'interface (on veut savoir si message "liké" par l'utilisateur dans Accueil.vue)
                 messageInfos.liked = messageLikedByUser; 
-            // Champ éphémère pour affichage des boutons de modif de l'user connecté
-            messageInfos.owner = messageInfos.userId == loggedUserId; 
+                // Champ éphémère pour affichage des boutons de modif de l'user connecté
+                messageInfos.owner = messageInfos.userId == loggedUserId; 
             
-            state.messageInfos = messageInfos;
+                state.messageInfos = messageInfos;
         },
         ////////////////// MUTATIONS DE COMMENTAIRE ////////////////// 
         //MAJ du state messageInfos après MAJ updateMessage

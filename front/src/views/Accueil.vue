@@ -199,10 +199,10 @@ export default {
           content: this.content,
           userId: this.$store.state.user.userId,
         })
-        this.$router.go()	// Refreshes page
         .then(
           (response) => {
             console.log(response);
+            this.$router.go()	// Refreshes page
           },
           (error) => {
             console.log(error.message);
@@ -264,10 +264,10 @@ export default {
       if (e.target.classList.contains('liked')) {
         console.log('todo : to dislike');
         this.$store.dispatch("unlike", messageId)
-        this.$router.go()	// Refreshes page
         .then(
           (response) => {
             console.log(response);
+            this.$router.go()	// Refreshes page
           },
           (error) => {
             console.log(error.message);
@@ -276,10 +276,10 @@ export default {
       } else {
         console.log('todo : to like');
         this.$store.dispatch("like", messageId)
-        this.$router.go()	// Refreshes page
         .then(
           (response) => {
             console.log(response);
+            this.$router.go()	// Refreshes page
           },
           (error) => {
             console.log(error.message);
