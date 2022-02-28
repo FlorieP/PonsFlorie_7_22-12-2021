@@ -131,4 +131,14 @@ p {
     padding: 8px;
     margin: 0px 10px 10px 10px;
 }
+/******************** RESPONSIVE ********************/
+/******** MOBILE ********/
+@media screen and (max-width: 505px){
+    #profileDelete {
+        margin: 5px;
+    }  
+    #profileDelete .card {
+        width: 100%;
+    }
+}
 </style>

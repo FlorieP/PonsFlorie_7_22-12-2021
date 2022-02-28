@@ -201,4 +201,18 @@ export default {
 .form__input::placeholder {
   color: #aaaaaa;
 }
+/******************** RESPONSIVE ********************/
+/******** MOBILE ********/
+@media screen and (max-width: 505px){
+body{
+  margin: 5px;
+} 
+.card {
+  width: 100%;
+}
+.card .card__subtitle{
+  display: flex;
+  flex-direction: column;
+}
+}
 </style>

@@ -125,4 +125,15 @@ p {
 #profil .buttons i:hover {
     color: #1976D2;
 }
+/******************** RESPONSIVE ********************/
+/******** MOBILE ********/
+@media screen and (max-width: 505px){
+    #profil {
+        margin: 5px;
+    }  
+    #profil .card {
+        width: 100%;
+    }
+}
+
 </style>

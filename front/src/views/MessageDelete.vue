@@ -192,4 +192,30 @@ body {
     padding: 8px;
     margin: 0px 10px 10px 10px;
 }
+/******************** RESPONSIVE ********************/
+/******** MOBILE ********/
+@media screen and (max-width: 767px){
+    #messageDelete {
+        margin: 5px;
+    }
+    #messageDelete .card {
+        width: 100%;
+    }
+    #messageDelete .comments {
+        width: 100%;
+    }
+}
+
+/******** TABLETTE ********/
+@media screen and (min-width: 768px) and (max-width: 806px){
+    #messageDelete {
+        margin: 5px;
+    }
+    #messageDelete .card {
+        width: 100%;
+    }
+    #messageDelete .comments {
+        width: 100%;
+    }
+}
 </style>

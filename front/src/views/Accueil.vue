@@ -558,4 +558,30 @@ body {
   display: flex;
   flex-direction: column;
 }
+/******************** RESPONSIVE ********************/
+/******** MOBILE ********/
+@media screen and (max-width: 767px){
+    #wall {
+        margin: 5px;
+    }
+    #wall .card {
+        width: 100%;
+    }
+    #wall .comments {
+        width: 100%;
+    }
+}
+
+/******** TABLETTE ********/
+@media screen and (min-width: 768px) and (max-width: 806px){
+    #wall {
+        margin: 5px;
+    }
+    #wall .card {
+        width: 100%;
+    }
+    #wall .comments {
+        width: 100%;
+    }
+}
 </style>

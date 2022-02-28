@@ -177,4 +177,14 @@ h1 {
   border: none;
   padding: 8px;
 }
+/******************** RESPONSIVE ********************/
+/******** MOBILE ********/
+@media screen and (max-width: 505px){
+  #profileUpdate {
+      margin: 5px;
+  }  
+  #profileUpdate .card {
+      width: 100%;
+  }
+}
 </style>
