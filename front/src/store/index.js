@@ -110,7 +110,8 @@ const store = createStore({
         },    
         //MAJ du state du tableau messages + affichage des likes du User connecté
         messages: function(state, messages) {
-            const loggedUserId = state.user.userId;
+        const loggedUserId = state.user.userId;
+        const admin = state.user.isAdmin;
             for (const message of messages) {
                 //détrerminé si l'utilisateur à déjà liké un post (affichage couleur)
                 let messageLikedByUser = false;
@@ -124,6 +125,7 @@ const store = createStore({
                 message.liked = messageLikedByUser;
                 // Champ éphémère pour affichage des boutons de modif de l'user connecté
                 message.owner = message.userId == loggedUserId;
+                message.admin = admin == true;
             }
             state.messages = messages;
         },
@@ -140,8 +142,8 @@ const store = createStore({
                 // Champ éphémère pour l'interface (on veut savoir si message "liké" par l'utilisateur dans Accueil.vue)
                 messageInfos.liked = messageLikedByUser; 
                 // Champ éphémère pour affichage des boutons de modif de l'user connecté
-                messageInfos.owner = messageInfos.userId == loggedUserId; 
-            
+                messageInfos.owner = messageInfos.userId == loggedUserId;
+
                 state.messageInfos = messageInfos;
         },
         ////////////////// MUTATIONS DE COMMENTAIRE ////////////////// 

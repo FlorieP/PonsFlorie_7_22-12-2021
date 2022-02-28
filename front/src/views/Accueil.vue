@@ -72,7 +72,7 @@
           </div>
           </a>
           <!---------- Modif et Suppression ---------->
-          <div v-if="message.owner" class="buttons">
+          <div v-if="message.owner || message.admin" class="buttons">
              <a :href="'/MessageUpdate/' + message.id"><i class="far fa-edit"></i></a>
              <a :href="'/MessageDelete/' + message.id"><i class="far fa-trash-alt"></i></a>
           </div>
