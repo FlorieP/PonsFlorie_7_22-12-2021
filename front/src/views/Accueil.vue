@@ -114,7 +114,6 @@
               </div> 
               <div v-else-if="commentDeleteMode.indexOf(comment.id) > -1" class="deleteMode comments_body">
                 <p>Voulez-vous vraiment supprimé votre commentaire ?</p>
-                    if (like.userId == loggedUserId) {
                 <div class="buttons">
                   <button @click="deleteComment(comment.id)" class="confirm">Confirmer</button>
                   <button @click="toggleDeleteComment(comment.id)" class="cancel">Annuler</button>
