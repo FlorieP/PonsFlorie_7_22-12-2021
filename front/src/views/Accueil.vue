@@ -127,7 +127,7 @@
                   <p>{{comment.content}}</p>
                 </div>
               </div>
-              <div v-if="comment.owner || userInfos.isAdmin" class="buttons">
+              <div v-if="message.commentOwner || userInfos.isAdmin" class="buttons">
                 <i @click="toggleUpdateComment(comment.id)" class="far fa-edit"></i>
                 <i @click="toggleDeleteComment(comment.id)" class="far fa-trash-alt"></i>
               </div>

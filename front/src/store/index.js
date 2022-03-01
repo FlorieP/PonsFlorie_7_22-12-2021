@@ -126,6 +126,7 @@ const store = createStore({
                 message.liked = messageLikedByUser;
                 // Champ éphémère pour affichage des boutons de modif de l'user connecté
                 message.owner = message.userId == loggedUserId;
+                message.Comments.owner = state.comments.userId == loggedUserId;
             }
             state.messages = messages;
         },
@@ -156,11 +157,12 @@ const store = createStore({
         //MAJ du state du tableau messages
         comments: function(state, comments) {
             const loggedUserId = state.user.userId;
-            state.comments = comments;
             for (const comment of comments) {
                 // Champ éphémère pour affichage des boutons de modif de l'user connecté
-                comment.owner = comment.userId == loggedUserId;  
+                comment.owner = comment.userId == loggedUserId;
+                state.comments = comments;  
             } 
+            
         },
     },
     actions: {
