@@ -125,7 +125,7 @@ exports.login = (req, res, next) => {
 exports.profil = (req, res, next) => {
     //fonction findOne qui permet de trouver une utilisateur en particulier
     User.findOne({
-        attributes: ["firstname", "lastname", "bio", "avatar", "email"],
+        attributes: ["firstname", "lastname", "bio", "avatar", "email", "isAdmin"],
         where: { id: req.params.id },
     })
         .then((user) => {

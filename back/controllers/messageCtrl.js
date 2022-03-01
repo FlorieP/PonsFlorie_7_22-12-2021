@@ -45,10 +45,19 @@ exports.createMessage = (req, res) => {
   //Création du GET pour afficher tous les messages
   exports.allMessage = (req, res, next) => {
     //fonction find qui permet de trouver tous les messages
+
     Message.findAll({
       order: [["id", "DESC"]],
-      include: [ User, Comment, Like]
+      include: [
+        User,
+        Like,
+        {
+          model: Comment,
+          include : User,
+        },
+      ],
     })
+
       .then((response) => res.status(200).json(response)
       )
       .catch(error => res.status(400).json({ message: error.message }));

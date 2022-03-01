@@ -34,7 +34,7 @@
                 <div class="buttons">
                     <a href="/ProfileUpdate"><i class="fas fa-user-edit"></i></a>
                     <a href="/ProfileDelete"><i class="far fa-trash-alt"></i></a>
-                    <a href="/Login"><i class="fas fa-power-off"></i></a>
+                    <i @click="logout" class="fas fa-power-off"></i>
                 </div>
             </div>   
         </section>  
@@ -56,7 +56,13 @@ export default {
     computed: mapState([
         'userInfos',
 
-    ])
+    ]),
+    methods: {
+        logout: function () {
+            localStorage.removeItem('user');
+            this.$router.push('/Login');
+        },
+    }
 }
 </script>
 

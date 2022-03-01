@@ -59,7 +59,9 @@ export default {
         },
         deleteProfile: function () {
             this.$store.dispatch("deleteProfile");
+            localStorage.removeItem('user');
             this.$router.push('/login');
+
         }
     }
 }

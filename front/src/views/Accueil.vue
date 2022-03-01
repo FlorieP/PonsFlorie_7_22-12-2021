@@ -72,7 +72,7 @@
           </div>
           </a>
           <!---------- Modif et Suppression ---------->
-          <div v-if="message.owner || message.admin" class="buttons">
+          <div v-if="message.owner || userInfos.isAdmin" class="buttons">
              <a :href="'/MessageUpdate/' + message.id"><i class="far fa-edit"></i></a>
              <a :href="'/MessageDelete/' + message.id"><i class="far fa-trash-alt"></i></a>
           </div>
@@ -80,14 +80,14 @@
         <!---------- Icons ---------->
         <div class="card_footer">
           <div class="comment">
-            <p><i @click="switchComments == false? showComments(message.id, true):showComments(message.id, false)" class="fas fa-comments"></i> <span class="number">{{message.Comments.length}}</span></p>
+            <p><i @click="toggleComments(message.id)" class="fas fa-comments"></i> <span class="number">{{message.Comments.length}}</span></p>
           </div>
           <div class="like">
             <p><i @click="likeClick($event, message.id)" class="fas fa-heart" v-bind:class="{ liked: message.liked }" ></i> <span class="number">{{message.Likes.length}}</span></p>
           </div>
         </div>
         <!---------- Commentaires ---------->
-        <div v-show="switchComments == true" class="card_comments">
+        <div v-show="commentsDisplayedByMessageId.indexOf(message.id) > -1" class="card_comments">
           <!---------- Nouveau Commentaires ---------->
           <div v class="comments">
             <div class="comments_header">
@@ -104,32 +104,32 @@
           <div v-for="comment in message.Comments" :key="comment.id" class="comments">
             <div class="comments_header">
               <div class="avatar">
-                <img src="" />
+                <img :src="comment.User.avatar" />
               </div>
-              <div v-if="commentMode === 'updateComment'" class=" comments_body">
+              <div v-if="commentUpdateMode.indexOf(comment.id) > -1" class=" comments_body">
                   <input type="text" name="content" :value="comment.content" @input="updateCommentField"/> 
                   <div class="buttons">
-                    <button @click="updateComment(comment.id)" class="confirm">Sauvegarder</button>
+                    <button @click="updateComment(comment.id, message.id)" class="confirm">Sauvegarder</button>
                   </div>
               </div> 
-              <div v-else-if="commentMode === 'deleteComment'" class="deleteMode comments_body">
+              <div v-else-if="commentDeleteMode.indexOf(comment.id) > -1" class="deleteMode comments_body">
                 <p>Voulez-vous vraiment supprimé votre commentaire ?</p>
                 <div class="buttons">
                   <button @click="deleteComment(comment.id)" class="confirm">Confirmer</button>
-                  <button @click="getMode()" class="cancel">Annuler</button>
+                  <button @click="toggleDeleteComment(comment.id)" class="cancel">Annuler</button>
                 </div>
               </div>
               <div v-else class="comments_body">
                 <div class="who">
-                  <p>Publié par <span class="name">Nom Prénom</span> le {{humanizeDate(comment.createdAt)}}</p>
+                  <p>Publié par <span class="name">{{comment.User.firstname}} {{comment.User.lastname}}</span> le {{humanizeDate(comment.createdAt)}}</p>
                 </div>
                 <div class="text">
                   <p>{{comment.content}}</p>
                 </div>
               </div>
-              <div v-if="comment.owner" class="buttons">
-                <i @click="updateMode()" class="far fa-edit"></i>
-                <i @click="deleteMode()" class="far fa-trash-alt"></i>
+              <div v-if="comment.owner || userInfos.isAdmin" class="buttons">
+                <i @click="toggleUpdateComment(comment.id)" class="far fa-edit"></i>
+                <i @click="toggleDeleteComment(comment.id)" class="far fa-trash-alt"></i>
               </div>
             </div>
           </div>
@@ -166,28 +166,17 @@ export default {
     },
   data: function () {
     return {
-      switchComments : false,
+      commentsDisplayedByMessageId : [],
+      commentUpdateMode : [],
+      commentDeleteMode : [],
       addPicture: false,
       previewImage: null,
-      commentMode : 'Comment',
       content: '',
       date: ''
     };
   },
   methods: {
-    //Afficharge des commentaires
-    showComments: function (messageId, status) {
-      this.statusShowComments[messageId] = false;
-      if (status) {
-        this.$set(this.statusShowComments, messageId = true);
-        console.log(this.statusSwitchComments);
-        this.switchComments = true;
-      } else {
-        this.statusShowComments[messageId] = false;
-        console.log(this.statusShowComments);
-        this.switchComments = false;
-      }
-    },
+    //Récupérer et stocker une image
     uploadImage(e) {
       let image = e.target.files[0];
       this.$store.commit("uploadImage", {image});
@@ -226,15 +215,72 @@ export default {
           }
         ); 
     },
+    //Affichage / masquage des commentaires
+    toggleComments: function (messageId) {
+      let foundIdx = this.commentsDisplayedByMessageId.indexOf(messageId);
+      if (foundIdx > -1) {
+        // messageId déjà là -> on le retire pour masquer les commentaires
+        this.commentsDisplayedByMessageId.splice(foundIdx, 1);
+      } else {
+        // messageId pas là -> on l'ajoute pour afficher les commentaires
+        this.commentsDisplayedByMessageId.push(messageId);
+      }
+    },
+    //Affichage / masquage UpdateComment
+    toggleUpdateComment: function (commentId) {
+      let deleteIdx = this.commentDeleteMode.indexOf(commentId);
+      if (deleteIdx > -1) {
+        // on s'assure de ne pas être en mode delete
+        this.commentDeleteMode.splice(deleteIdx, 1);
+      }
+      let updateIdx = this.commentUpdateMode.indexOf(commentId);
+      if (updateIdx > -1) {
+        // commentId déjà là -> on le retire pour changer de mode
+        this.commentUpdateMode.splice(updateIdx, 1);
+      } else {
+        // commentId pas là -> on l'ajoute pour changer de mode
+        this.commentUpdateMode.push(commentId);
+      }
+    },
+    //Affichage / masquage DeleteComment
+    toggleDeleteComment: function (commentId) {
+      let updateIdx = this.commentUpdateMode.indexOf(commentId);
+      if (updateIdx > -1) {
+        // on s'assure de ne pas être en mode delete
+        this.commentUpdateMode.splice(updateIdx, 1);
+      }
+      let foundIdx = this.commentDeleteMode.indexOf(commentId);
+      if (foundIdx > -1) {
+        // commentId déjà là -> on le retire pour changer de mode
+        this.commentDeleteMode.splice(foundIdx, 1);
+      } else {
+        // commentId pas là -> on l'ajoute pour changer de mode
+        this.commentDeleteMode.push(commentId);
+      }
+    },
+    //fonction qui récupère le nom des champs etr les valeurs pour les envoyer au mutateur
+    updateCommentField(e) {
+        this.$store.commit("updateCommentField", {
+            newValue: e.target.value,
+            fieldName: e.target.name,
+        });
+    },
     //Modification d'un commentaire
-    updateComment: function (commentId) {
+    updateComment: function (commentId, messageId) {
       console.log('fonction update');
-        console.log("Messageid " + this.$route.params.id + " Comment id " + commentId);
+        console.log("Messageid " + messageId + " Comment id " + commentId);
         this.$store.dispatch("updateComment", {
-          messageId :this.$route.params.id, 
-          commentId : commentId});
-        this.commentMode = "Comment";
-        this.$router.go()	// Refreshes page
+          messageId : messageId, 
+          commentId : commentId})
+          .then(
+          (response) => {
+            console.log(response);
+            this.$router.go()	// Refreshes page
+          },
+          (error) => {
+            console.log(error.message);
+          }
+        );
     },
     //Suppression d'un commentaire
     deleteComment: function (commentId) {
@@ -245,17 +291,6 @@ export default {
           this.commentMode = "Comment";
           this.$router.go()	// Refreshes page
     },
-    //Changement de vue de comment
-    getMode: function () {
-        this.commentMode = 'Comment';
-    },
-    updateMode: function () {
-        this.commentMode = 'updateComment';
-    },
-    deleteMode: function () {
-        this.commentMode = 'deleteComment';
-    },   
-
     //Like / Unlike
     likeClick : function (e, messageId) {
       console.log('likeClick');
@@ -540,23 +575,31 @@ body {
     justify-content: center;
     margin-top: 10px;
 }
+
+#wall .buttons button {
+    background: #1976D2;
+    color:white;
+    border-radius: 15px;
+    border: none;
+    padding: 8px;
+    margin: 0px 10px 10px 10px;
+}
+#wall .comments .deleteMode .buttons {
+  display: flex;
+  flex-direction: row;
+}
 /************* BOUTONS MODIF ET DELETE ************/
 #wall .buttons i {
   font-size: 15px;
   margin: 15px;
   color: grey;
 }
-#getOneMessage .comments .buttons {
+#wall .comments .buttons {
   display: flex;
   flex-direction: column;
 }
 #wall .buttons i:hover {
   color: #1976d2;
-}
-/**** BOUTONS COMMENT ****/
-#wall .comments .buttons {
-  display: flex;
-  flex-direction: column;
 }
 /******************** RESPONSIVE ********************/
 /******** MOBILE ********/

@@ -44,7 +44,7 @@
           </div>
         </div>
         <!---------- Modif et Suppression ---------->
-        <div v-if="messageInfos.owner" class="buttons buttons_message">
+        <div v-if="messageInfos.owner || userInfos.isAdmin" class="buttons buttons_message">
           <a :href="'/messageUpdate/' + this.$route.params.id"><i class="far fa-edit"></i></a>
           <a :href="'/messageDelete/' + this.$route.params.id"><i class="far fa-trash-alt"></i></a>
         </div>
@@ -77,17 +77,17 @@
               <div class="avatar">
                 <img :src="comment.User.avatar" />
               </div>
-              <div v-if="commentMode === 'updateComment'" class=" comments_body">
+              <div v-if="commentUpdateMode.indexOf(comment.id) > -1" class=" comments_body">
                   <input type="text" name="content" :value="comment.content" @input="updateCommentField"/> 
                   <div class="buttons">
                     <button @click="updateComment(comment.id)" class="confirm">Sauvegarder</button>
                   </div>
               </div> 
-              <div v-else-if="commentMode === 'deleteComment'" class="deleteMode comments_body">
+              <div v-else-if="commentDeleteMode.indexOf(comment.id) > -1" class="deleteMode comments_body">
                 <p>Voulez-vous vraiment supprimé votre commentaire ?</p>
                 <div class="buttons">
                   <button @click="deleteComment(comment.id)" class="confirm">Confirmer</button>
-                  <button @click="getMode()" class="cancel">Annuler</button>
+                  <button @click="toggleDeleteComment(comment.id)" class="cancel">Annuler</button>
                 </div>
               </div>
               <div v-else class="comments_body">
@@ -98,9 +98,9 @@
                   <p>{{comment.content}}</p>
                 </div>
               </div>
-              <div v-if="comment.owner" class="buttons">
-                <i @click="updateMode" class="far fa-edit"></i>
-                <i @click="deleteMode" class="far fa-trash-alt"></i>
+              <div v-if="comment.owner || userInfos.isAdmin" class="buttons">
+                <i @click="toggleUpdateComment(comment.id)" class="far fa-edit"></i>
+                <i @click="toggleDeleteComment(comment.id)" class="far fa-trash-alt"></i>
               </div>
             </div>
           </div>
@@ -137,12 +137,46 @@ export default {
   },
   data: function () {
     return {
-      commentMode : 'Comment',
+      commentUpdateMode : [],
+      commentDeleteMode : [],
       content: '',
-      date: ''
+      date: '',
+
     };
   },
   methods: {
+    //Affichage / masquage UpdateComment
+    toggleUpdateComment: function (commentId) {
+      let deleteIdx = this.commentDeleteMode.indexOf(commentId);
+      if (deleteIdx > -1) {
+        // on s'assure de ne pas être en mode delete
+        this.commentDeleteMode.splice(deleteIdx, 1);
+      }
+      let updateIdx = this.commentUpdateMode.indexOf(commentId);
+      if (updateIdx > -1) {
+        // commentId déjà là -> on le retire pour changer de mode
+        this.commentUpdateMode.splice(updateIdx, 1);
+      } else {
+        // commentId pas là -> on l'ajoute pour changer de mode
+        this.commentUpdateMode.push(commentId);
+      }
+    },
+    //Affichage / masquage DeleteComment
+    toggleDeleteComment: function (commentId) {
+      let updateIdx = this.commentUpdateMode.indexOf(commentId);
+      if (updateIdx > -1) {
+        // on s'assure de ne pas être en mode delete
+        this.commentUpdateMode.splice(updateIdx, 1);
+      }
+      let foundIdx = this.commentDeleteMode.indexOf(commentId);
+      if (foundIdx > -1) {
+        // commentId déjà là -> on le retire pour changer de mode
+        this.commentDeleteMode.splice(foundIdx, 1);
+      } else {
+        // commentId pas là -> on l'ajoute pour changer de mode
+        this.commentDeleteMode.push(commentId);
+      }
+    },
     //fonction qui récupère le nom des champs etr les valeurs pour les envoyer au mutateur
     updateCommentField(e) {
         this.$store.commit("updateCommentField", {
@@ -175,7 +209,6 @@ export default {
         this.$store.dispatch("updateComment", {
           messageId :this.$route.params.id, 
           commentId : commentId});
-        this.commentMode = "Comment";
         this.$router.go()	// Refreshes page
     },
     //Suppression d'un commentaire
@@ -184,19 +217,8 @@ export default {
         this.$store.dispatch("deleteComment", {
           messageId :this.$route.params.id, 
           commentId : commentId});
-          this.commentMode = "Comment";
           this.$router.go()	// Refreshes page
     },
-    //Changement de vue de comment
-    getMode: function () {
-        this.commentMode = 'Comment';
-    },
-    updateMode: function () {
-        this.commentMode = 'updateComment';
-    },
-    deleteMode: function () {
-        this.commentMode = 'deleteComment';
-    }, 
     //Like / Unlike
     likeClick : function (e, messageId) {
       console.log('likeClick');
