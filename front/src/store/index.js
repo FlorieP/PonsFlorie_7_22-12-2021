@@ -124,14 +124,18 @@ const store = createStore({
                 }
                 // Champ éphémère pour l'interface (on veut savoir si message "liké" par l'utilisateur dans Accueil.vue)
                 message.liked = messageLikedByUser;
+                
                 let ownerComment = false;
                 for (const comment of message.Comments) {
                     if (comment.userId == loggedUserId) {
                         ownerComment = true;
-                        break;
                     }
+                    console.log(comment.userId)
+                    console.log(loggedUserId)
+                    console.log(ownerComment)
+                    comment.owner = ownerComment;
                 }
-                message.commentOwner = ownerComment;
+               // message.commentOwner = ownerComment;
                 // Champ éphémère pour affichage des boutons de modif de l'user connecté
                 message.owner = message.userId == loggedUserId;
             }
