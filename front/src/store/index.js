@@ -115,8 +115,8 @@ const store = createStore({
         },    
         //MAJ du state messages 
         messages: function(state, messages) {
-        //Récupération du User connecté
-        const loggedUserId = state.user.userId;
+            //Récupération du User connecté
+            const loggedUserId = state.user.userId;
             for (const message of messages) {
                 //Détrerminé si l'utilisateur à déjà liké un post (affichage couleur)
                 let messageLikedByUser = false;
@@ -129,18 +129,10 @@ const store = createStore({
                 //Champ éphémère pour l'interface -> récupération des messages "liké" par l'utilisateur dans Accueil.vue
                 message.liked = messageLikedByUser;
                 //Déterminé si un utilisateur est "owner" d'un commentaire
-                let ownerComment = false;
                 for (const comment of message.Comments) {
-                    if (comment.userId == loggedUserId) {
-                        ownerComment = true;
-                    }
-                    //console.log(comment.userId)
-                    //console.log(loggedUserId)
-                    //console.log(ownerComment)
                     //Champ éphémère -> affichage des boutons de modif de l'user connecté pour les commentaires dans Accueil.vue
-                    comment.owner = ownerComment;
+                    comment.owner = comment.userId == loggedUserId;
                 }
-               // message.commentOwner = ownerComment;
                 //Champ éphémère -> affichage des boutons de modif de l'user connecté pour les messages dans Accueil.vue
                 message.owner = message.userId == loggedUserId;
             }

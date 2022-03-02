@@ -600,7 +600,7 @@ body {
 /************* BOUTONS MODIF ET DELETE ************/
 #wall .buttons i {
   font-size: 15px;
-  margin: 15px;
+  margin: 8px 15px 8px 8px;
   color: grey;
 }
 #wall .comments .buttons {
