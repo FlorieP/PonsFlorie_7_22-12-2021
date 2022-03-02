@@ -102,11 +102,12 @@ exports.createMessage = (req, res) => {
 
 //Création du DELETE pour supprimer un message 
 exports.deleteMessage = (req, res, next) => {
-  let userId = token.getUserId(req);
+ 
+ 
   //fonction find qui permet de trouver un message
   Message.findOne({ where: {id: req.params.id }})
     .then(message => {
-      if (userId != message.userId) {
+      if (! token.getAuthorization(req, message.userId)) {
         console.log("user de message: " + message.userId)
         res.status(403).json({ message: "Seul l'utilisateur qui a créé le message peut le supprimer" })
           .catch((error) => res.status(400).json({ message: error.message }));

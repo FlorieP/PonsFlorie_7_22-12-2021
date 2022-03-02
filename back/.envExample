@@ -1,0 +1,11 @@
+// Port sur lequel l'application doit tourner
+PORT = XXXX
+
+//Connexion à MySQL
+DB_USERNAME = "XXXXXXXXX"
+DB_PASSWORD = "XXXXXXXXX"
+
+
+//Clé de chiffrement CRYPTO-JS & TOKEN
+CRYPTOJS_KEY_EMAIL = "XXXXXXXXX"
+JWT_KEY_TOKEN = "XXXXXXXXX"

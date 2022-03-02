@@ -1,7 +1,6 @@
 //Importation des packages de node
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const cryptojs = require('crypto-js');
 const dotenv = require('dotenv').config();
 const fs = require('fs'); //filesystem
 
@@ -102,10 +101,11 @@ exports.login = (req, res, next) => {
                     //Bon mdp, renvoi d'un json avec un id et un token 
                     res.status(200).json({
                         userId: user.id,
+                       isAdmin: user.isAdmin,
                         //appel de la fonction sign de JWT
                         token: jwt.sign(
                             //1er argument des données que l'on veut encodé
-                            { userId: user.id },
+                            { userId: user.id , isAdmin: user.isAdmin },
                             //clé secret de l'encodage
                             process.env.JWT_KEY_TOKEN,
                             //configuration de l'expiration du token

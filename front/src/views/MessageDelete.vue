@@ -94,11 +94,11 @@ export default {
     },
     methods: {
         returnToMessage: function () {
-            this.$router.push('/messageGetOne/' + this.$route.params.id);
+            this.$router.push('/MessageGetOne/' + this.$route.params.id);
         },
         deleteMessage: function () {
             this.$store.dispatch("deleteMessage", this.$route.params.id);
-            this.$router.push('/accueil');
+            this.$router.push('/Accueil');
         }
     },
 };

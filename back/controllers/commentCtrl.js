@@ -63,12 +63,10 @@ exports.modifyComment = (req, res, next) => {
 
 //Création du DELETE pour supprimer un commentaire
 exports.deleteComment = (req, res, next) => {
-  let userId = token.getUserId(req);
-  console.log(userId)
   Comment.findOne({ where: { id: req.params.id }})
     .then(comment => {
       //Vérification de l'userId en comparaison avec celui du commentaire
-      if (userId != comment.userId) {
+      if (! token.getAuthorization(req, comment.userId)) {
         res.status(403).json({ message: "Seul l'utilisateur qui a créé le commentaire peut le supprimer" })
           .catch((error) => res.status(400).json({ message: error.message }));
       } else {

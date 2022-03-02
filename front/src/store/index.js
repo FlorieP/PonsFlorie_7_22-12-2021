@@ -1,10 +1,8 @@
-//Importation des moduldes de Vue
+///// Importation des moduldes de Vue /////
 import { createStore } from 'vuex'
-
-//Axios
 const axios = require('axios');
 
-//Récupération des informations du User
+///// Récupération des informations du User /////
 let user = localStorage.getItem('user');
 if (!user){
     user= {
@@ -23,13 +21,14 @@ if (!user){
     }
 }
 
-//Création du store
+////// Création du store /////
 const store = createStore({
 
     state: {
         status: '',
         uploadFile: null,
-        // USER //
+
+    // USER //
         user : user,
         userInfos: {
             lastname: '',
@@ -39,7 +38,8 @@ const store = createStore({
             avatar: '',
             isAdmin: false,
         },
-        //MESSAGE //
+
+    // MESSAGE //
         //Tous les messages
         messages: [],
         //Un message
@@ -55,7 +55,7 @@ const store = createStore({
             Comments: [],
             Likes: [],
          },
-        //MESSAGE //
+    // COMMENTAIRE //
         //Tous les commentaires
         comments: [],
         commentInfos: {
@@ -63,6 +63,7 @@ const store = createStore({
          },
     },
     getters: {
+        //Formatage de la date
         humanizeDate: function(state) {
             state
             return function(dateIso) {
@@ -80,7 +81,11 @@ const store = createStore({
         setStatus: function (state, status) {
             state.status = status;
         },
-        ////////////////// MUTATIONS DE USER ////////////////// 
+        //Récupération des images du site
+        uploadImage (state, {image}) {
+            state.uploadFile= image;
+        },
+    ////////////////// MUTATIONS DE USER ////////////////// 
         //MAJ du state user 
         logUser: function (state, user) {
             //Rajoute un token dans le header de toutes les requêtes
@@ -99,22 +104,19 @@ const store = createStore({
         updateUserField (state, {newValue, fieldName }) {
             state.userInfos[fieldName] = newValue
         },
-        uploadImage (state, {image}) {
-            state.uploadFile= image;
-        },
-        ////////////////// MUTATIONS DE MESSAGE ////////////////// 
+    ////////////////// MUTATIONS DE MESSAGE ////////////////// 
         //MAJ du state messageInfos après MAJ updateMessage
         updateMessageField (state, {newValue, fieldName }) {
-            state.messageInfos[fieldName] = newValue,
-            console.log(fieldName),
-            console.log(newValue)
+            state.messageInfos[fieldName] = newValue
+            //console.log(fieldName)
+            //console.log(newValue)
         },    
-        //MAJ du state du tableau messages + affichage des likes du User connecté
+        //MAJ du state messages 
         messages: function(state, messages) {
+        //Récupération du User connecté
         const loggedUserId = state.user.userId;
-
             for (const message of messages) {
-                //détrerminé si l'utilisateur à déjà liké un post (affichage couleur)
+                //Détrerminé si l'utilisateur à déjà liké un post (affichage couleur)
                 let messageLikedByUser = false;
                 for (const like of message.Likes) {
                     if (like.userId == loggedUserId) {
@@ -122,29 +124,32 @@ const store = createStore({
                          break;
                     }
                 }
-                // Champ éphémère pour l'interface (on veut savoir si message "liké" par l'utilisateur dans Accueil.vue)
+                //Champ éphémère pour l'interface -> récupération des messages "liké" par l'utilisateur dans Accueil.vue
                 message.liked = messageLikedByUser;
-                
+                //Déterminé si un utilisateur est "owner" d'un commentaire
                 let ownerComment = false;
                 for (const comment of message.Comments) {
                     if (comment.userId == loggedUserId) {
                         ownerComment = true;
                     }
-                    console.log(comment.userId)
-                    console.log(loggedUserId)
-                    console.log(ownerComment)
+                    //console.log(comment.userId)
+                    //console.log(loggedUserId)
+                    //console.log(ownerComment)
+                    //Champ éphémère -> affichage des boutons de modif de l'user connecté pour les commentaires dans Accueil.vue
                     comment.owner = ownerComment;
                 }
                // message.commentOwner = ownerComment;
-                // Champ éphémère pour affichage des boutons de modif de l'user connecté
+                //Champ éphémère -> affichage des boutons de modif de l'user connecté pour les messages dans Accueil.vue
                 message.owner = message.userId == loggedUserId;
             }
- 
+            //MAJ du state messages
             state.messages = messages;
         },
-        //MAJ du state d'un message
+        //MAJ du state d'un message (messageInfos)
         messageInfos: function(state, messageInfos) {
+            //Récupération du User connecté
             const loggedUserId = state.user.userId;
+            //Détrerminé si l'utilisateur à déjà liké un post (affichage couleur)
              let messageLikedByUser = false;
                 for (const like of messageInfos.Likes) {
                     if (like.userId == loggedUserId) {
@@ -152,21 +157,21 @@ const store = createStore({
                          break;
                     }
                 }
-                // Champ éphémère pour l'interface (on veut savoir si message "liké" par l'utilisateur dans Accueil.vue)
+                //Champ éphémère pour l'interface -> récupération des messages "liké" par l'utilisateur dans MessageGetOne.vue
                 messageInfos.liked = messageLikedByUser; 
-                // Champ éphémère pour affichage des boutons de modif de l'user connecté
+                //Champ éphémère -> affichage des boutons de modif de l'user connecté pour les commentaires dans MessageGetOne.vue
                 messageInfos.owner = messageInfos.userId == loggedUserId;
-
+                //MAJ du state messageInfos
                 state.messageInfos = messageInfos;
         },
-        ////////////////// MUTATIONS DE COMMENTAIRE ////////////////// 
-        //MAJ du state messageInfos après MAJ updateMessage
+    ////////////////// MUTATIONS DE COMMENTAIRE ////////////////// 
+        //MAJ du state commentInfos après MAJ updateComment
         updateCommentField (state, {newValue, fieldName }) {
             state.commentInfos[fieldName] = newValue,
             console.log(fieldName),
             console.log(newValue)
         },    
-        //MAJ du state du tableau messages
+        //MAJ du state comments
         comments: function(state, comments) {
             const loggedUserId = state.user.userId;
             for (const comment of comments) {
@@ -178,7 +183,7 @@ const store = createStore({
         },
     },
     actions: {
-        ///////////////////  ACTIONS USER ////////////////// 
+    ///////////////////  ACTIONS USER ////////////////// 
         //Fonction d'inscription de l'utilisateur
         signup : ({commit}, userInfos) => {
             return new Promise ((resolve, reject) => {
@@ -277,7 +282,7 @@ const store = createStore({
             })  
         },
 
-        ///////////////////  ACTIONS MESSAGE ////////////////// 
+    ///////////////////  ACTIONS MESSAGE ////////////////// 
         //Fonction de récupération de tous les messages
         getAllMessages : ({commit})=> {
             axios.get(`http://localhost:3000/api/message/`)
@@ -369,8 +374,7 @@ const store = createStore({
                 })
             })  
         },
-        
-        ///////////////////  ACTIONS COMMENTAIRE ////////////////// 
+    ///////////////////  ACTIONS COMMENTAIRE ////////////////// 
         //Fonction de récupération de tous les commentaires
         getAllComments : ({commit}, messageId)=> {
             axios.get(`http://localhost:3000/api/message/${messageId}/comment`)
@@ -434,7 +438,8 @@ const store = createStore({
                 })
             }) 
         },
-        ///////////////////  ACTIONS LIKE ////////////////// 
+    ///////////////////  ACTIONS LIKE ////////////////// 
+        //Création d'un like
         like : ({commit, state}, messageId) => {
             console.log(commit)
             console.log('Like ici')
@@ -452,6 +457,7 @@ const store = createStore({
                 })
             }) 
         },
+        //Annulation d'un like
         unlike : ({commit, state}, messageId) => {
             console.log(commit)
             console.log('Unlike ici')
@@ -471,7 +477,7 @@ const store = createStore({
         }
     }   
 })
-
+//Permet d'accéder au store depuis la console
 window.store = store;
 
 //Exportation du store
