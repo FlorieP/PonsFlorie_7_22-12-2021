@@ -44,9 +44,9 @@
           </div>
         </div>
         <!---------- Modif et Suppression ---------->
-        <div v-if="messageInfos.owner || userInfos.isAdmin" class="buttons buttons_message">
-          <a :href="'/messageUpdate/' + this.$route.params.id"><i class="far fa-edit"></i></a>
-          <a :href="'/messageDelete/' + this.$route.params.id"><i class="far fa-trash-alt"></i></a>
+        <div class="buttons buttons_message">
+          <a :href="'/messageUpdate/' + this.$route.params.id" v-if="messageInfos.owner"><i class="far fa-edit"></i></a>
+          <a :href="'/messageDelete/' + this.$route.params.id" v-if="messageInfos.owner || userInfos.isAdmin"><i class="far fa-trash-alt"></i></a>
         </div>
         <!---------- Icons ---------->
         <div class="card_footer">
@@ -98,9 +98,9 @@
                   <p>{{comment.content}}</p>
                 </div>
               </div>
-              <div v-if="comment.owner || userInfos.isAdmin" class="buttons">
-                <i @click="toggleUpdateComment(comment.id)" class="far fa-edit"></i>
-                <i @click="toggleDeleteComment(comment.id)" class="far fa-trash-alt"></i>
+              <div class="buttons">
+                <i v-if="comment.owner" @click="toggleUpdateComment(comment.id)" class="far fa-edit"></i>
+                <i v-if="comment.owner || userInfos.isAdmin" @click="toggleDeleteComment(comment.id)" class="far fa-trash-alt"></i>
               </div>
             </div>
           </div>
