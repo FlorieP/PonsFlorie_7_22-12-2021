@@ -57,32 +57,38 @@
 </template>
 
 <script>
+//Importation module Vuex
 import { mapState } from "vuex";
 
 export default {
   mounted: function () {
-    console.log(this.$store.state.user);
+    //Permet de renvoyer un utilisateur non connecter sur la page de connexion
     if (this.$store.state.user.userId == -1) {
       this.$router.push("/login");
       return;
     }
+    //Importation des données à afficher
     this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
   },
-  data: function () {
-    return {
-    };
+  computed: {
+    //Permet de récupérer les données du state du store 
+    ...mapState([
+      "userInfos", 
+      "uploadFile"
+    ]),
   },
-  computed: mapState(["userInfos", "uploadFile"]),
   methods: {
-    modifyProfile: function () {
-      this.$store.dispatch("modifyProfile");
-      this.$router.push("/profile");
-    },
+    //Récupérer et stocker une image
     uploadImage(e) {
       let image = e.target.files[0];
       this.$store.commit("uploadImage", {image});
     },
-    //fonction qui récupère le nom des champs etr les valeurs pour les envoyer au mutateur
+    //Fonction de modification du profil
+    modifyProfile: function () {
+      this.$store.dispatch("modifyProfile");
+      this.$router.push("/profile");
+    },
+    //Fonction qui récupère le nom des champs etr les valeurs pour les envoyer au mutateur
     updateUserField(e) {
       this.$store.commit("updateUserField", {
         newValue: e.target.value,

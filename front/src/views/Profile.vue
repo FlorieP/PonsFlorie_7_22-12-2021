@@ -42,22 +42,28 @@
 </template>
 
 <script>
+//Importation module Vuex
 import { mapState } from 'vuex'
 
 export default {
     mounted: function() {
+        //Permet de renvoyer un utilisateur non connecter sur la page de connexion
         console.log(this.$store.state.user);
         if (this.$store.state.user.userId == -1){
             this.$router.push('/login');
             return;
         }
+        //Importation des données à afficher
         this.$store.dispatch('getUserInfos', this.$store.state.user.userId);
     },
-    computed: mapState([
-        'userInfos',
-
-    ]),
+    computed: {
+        //Permet de récupérer les données du state du store 
+        ...mapState([
+            'userInfos',
+        ]),
+    }, 
     methods: {
+        //Permet de se déconnecter
         logout: function () {
             localStorage.removeItem('user');
             this.$router.push('/Login');

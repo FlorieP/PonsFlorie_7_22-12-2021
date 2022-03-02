@@ -23,7 +23,7 @@ if (!user){
 
 ////// Création du store /////
 const store = createStore({
-
+    //déclération de variables
     state: {
         status: '',
         uploadFile: null,
@@ -62,6 +62,7 @@ const store = createStore({
             content: '',
          },
     },
+
     getters: {
         //Formatage de la date
         humanizeDate: function(state) {
@@ -78,10 +79,11 @@ const store = createStore({
         }
     },
     mutations: {
+        //MAJ du status du state
         setStatus: function (state, status) {
             state.status = status;
         },
-        //Récupération des images du site
+        //Récupération des images du site et stockage dans state
         uploadImage (state, {image}) {
             state.uploadFile= image;
         },

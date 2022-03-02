@@ -62,41 +62,48 @@
 </template>
 
 <script>
+//Importation module Vuex
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 
 export default {
     mounted: function () {
-        //console.log(this.$store.state.user);
+        //Permet de renvoyer un utilisateur non connecter sur la page de connexion
         if (this.$store.state.user.userId == -1) {
             this.$router.push("/login");
             return;
         }
+        //Importation des données à afficher
         this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
         this.$store.dispatch("getOneMessage", this.$route.params.id);
         console.log(this.$store.state.messages);
         console.log(this.$route.params.id);
     },
+    data: function () {
+        //déclération de variables
+        return {
+            mode : 'owner',
+        };
+    },
     computed: {
+        //Permet de récupérer les données du state du store 
         ...mapState([
             "userInfos", 
             "messageInfos", 
             "uploadFile"
         ]),
+        //Permet de récupérer les fonctions du store
         ...mapGetters([
             "humanizeDate"
         ]),
     },
-    data: function () {
-        return {
-            mode : 'owner',
-        };
-    },
     methods: {
+        //Récupérer et stocker une image
         uploadImage(e) {
             let image = e.target.files[0];
             this.$store.commit("uploadImage", {image});
         },
+    ///////////////////  METHODES MESSAGE //////////////////     
         //fonction qui récupère le nom des champs etr les valeurs pour les envoyer au mutateur
         updateMessageField(e) {
             this.$store.commit("updateMessageField", {

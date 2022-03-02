@@ -61,41 +61,48 @@
 </template>
 
 <script>
+//Importation module Vuex
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 
 export default {
     mounted: function () {
-        //console.log(this.$store.state.user);
+        //Permet de renvoyer un utilisateur non connecter sur la page de connexion
         if (this.$store.state.user.userId == -1) {
             this.$router.push("/login");
             return;
         }
+        //Importation des données à afficher
         this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
         this.$store.dispatch("getOneMessage", this.$route.params.id);
-        console.log(this.$store.state.messages);
-        console.log(this.$route.params.id);
+        //console.log(this.$store.state.messages);
+        //console.log(this.$route.params.id);
     },
-  computed: {
-    ...mapState([
-      "userInfos", 
-      "messageInfos",
-    ]),
-    ...mapGetters([
-      "humanizeDate"
-    ]),
-  },
     data: function () {
+        //déclération de variable
         return {
             mode : 'owner',
             commentMode: null,
-
         };
     },
+    computed: {
+        //Permet de récupérer les données du state du store
+        ...mapState([
+            "userInfos", 
+            "messageInfos",
+        ]),
+        //Permet de récupérer les fonctions du store
+        ...mapGetters([
+            "humanizeDate"
+        ]),
+    },
     methods: {
+    ///////////////////  METHODES MESSAGE ////////////////// 
+        //Permet de retourner à la page MessageGetOne en cas d'annulation
         returnToMessage: function () {
             this.$router.push('/MessageGetOne/' + this.$route.params.id);
         },
+        //Fonction de suppression du message
         deleteMessage: function () {
             this.$store.dispatch("deleteMessage", this.$route.params.id);
             this.$router.push('/Accueil');

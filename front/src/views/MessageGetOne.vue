@@ -111,31 +111,25 @@
 </template>
 
 <script>
+//Importation module Vuex
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 
 export default {
   mounted: function () {
+    //Permet de renvoyer un utilisateur non connecter sur la page de connexion
     if (this.$store.state.user.userId == -1) {
       this.$router.push("/login");
       return;
     }
-      this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
-      this.$store.dispatch("getOneMessage", this.$route.params.id);
-      this.$store.dispatch("getAllComments", this.$route.params.id);
-      console.log(this.$store.state.messageInfos);
-  },
-  computed: {
-    ...mapState([
-      "userInfos", 
-      "messageInfos",
-      "comments"
-    ]),
-    ...mapGetters([
-      "humanizeDate"
-    ]),
+    //Importation des données à afficher
+    this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
+    this.$store.dispatch("getOneMessage", this.$route.params.id);
+    this.$store.dispatch("getAllComments", this.$route.params.id);
+    console.log(this.$store.state.messageInfos);
   },
   data: function () {
+    //déclération de variables
     return {
       commentUpdateMode : [],
       commentDeleteMode : [],
@@ -144,7 +138,20 @@ export default {
 
     };
   },
+  computed: {
+    //Permet de récupérer les données du state du store 
+    ...mapState([
+      "userInfos", 
+      "messageInfos",
+      "comments"
+    ]),
+    //Permet de récupérer les fonctions du store
+    ...mapGetters([
+      "humanizeDate"
+    ]),
+  },
   methods: {
+  ///////////////////  METHODES COMMENTAIRE ////////////////// 
     //Affichage / masquage UpdateComment
     toggleUpdateComment: function (commentId) {
       let deleteIdx = this.commentDeleteMode.indexOf(commentId);
@@ -184,7 +191,7 @@ export default {
             fieldName: e.target.name,
         });
     },
-    //Creation d'un nouveau message
+    //Creation d'un nouveau commentaire
     newComment: function () {
       console.log('fonction new');
        this.$store
@@ -195,7 +202,7 @@ export default {
         .then(
           (response) => {
             console.log(response);
-            this.$router.go()	// Refreshes page
+            this.$router.go()	// Rafraichir la page
           },
           (error) => {
             console.log(error.message);
@@ -209,7 +216,7 @@ export default {
         this.$store.dispatch("updateComment", {
           messageId :this.$route.params.id, 
           commentId : commentId});
-        this.$router.go()	// Refreshes page
+        this.$router.go()	// Rafraichir la page
     },
     //Suppression d'un commentaire
     deleteComment: function (commentId) {
@@ -217,8 +224,9 @@ export default {
         this.$store.dispatch("deleteComment", {
           messageId :this.$route.params.id, 
           commentId : commentId});
-          this.$router.go()	// Refreshes page
+          this.$router.go()	// Rafraichir la page
     },
+   ///////////////////  METHODES LIKE //////////////////
     //Like / Unlike
     likeClick : function (e, messageId) {
       console.log('likeClick');
@@ -230,7 +238,7 @@ export default {
         .then(
           (response) => {
             console.log(response);
-            this.$router.go()	// Refreshes page
+            this.$router.go()	// Rafraichir la page
           },
           (error) => {
             console.log(error.message);
@@ -243,7 +251,7 @@ export default {
         .then(
           (response) => {
             console.log(response);
-            this.$router.go()	// Refreshes page
+            this.$router.go()	// Rafraichir la page
           },
           (error) => {
             console.log(error.message);

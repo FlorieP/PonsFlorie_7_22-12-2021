@@ -12,7 +12,8 @@ module.exports = (sequelize, DataTypes) => {
     bio: DataTypes.STRING,
     isAdmin: DataTypes.BOOLEAN
   })
-  //Appelé dans index.js
+  //Appelé dans index.js de model
+  //Associaiton avec les autres tables
   User.associate = (models) => {
     // define association here
     models.User.hasMany(models.Message);

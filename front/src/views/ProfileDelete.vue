@@ -39,29 +39,36 @@
 </template>
 
 <script>
+//Importation module Vuex
 import { mapState } from 'vuex'
 
 export default {
     mounted: function() {
+        //Permet de renvoyer un utilisateur non connecter sur la page de connexion
         console.log(this.$store.state.user);
         if (this.$store.state.user.userId == -1){
             this.$router.push('/login');
             return;
         }
+        //Importation des données à afficher
         this.$store.dispatch('getUserInfos', this.$store.state.user.userId);
     },
-    computed: mapState([
-        'userInfos'
-    ]),
+    computed: {
+        //Permet de récupérer les données du state du store 
+        ...mapState([
+            'userInfos'
+        ]),
+    },
     methods: {
+        //Permet de retourner à la page Profil en cas d'annulation
         returnToProfile: function () {
             this.$router.push('/profile');
         },
+        //Fonction de suppression du profil
         deleteProfile: function () {
             this.$store.dispatch("deleteProfile");
             localStorage.removeItem('user');
             this.$router.push('/login');
-
         }
     }
 }

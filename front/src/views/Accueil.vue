@@ -140,31 +140,24 @@
 </template>
 
 <script>
+//Importation module Vuex
 import { mapState } from "vuex";
 import { mapGetters } from "vuex";
 
 export default {
   mounted: function () {
+    //Permet de renvoyer un utilisateur non connecter sur la page de connexion
     if (this.$store.state.user.userId == -1) {
       this.$router.push("/login");
       return;
     }
+    //Importation des données à afficher
     this.$store.dispatch("getUserInfos", this.$store.state.user.userId);
     this.$store.dispatch("getAllMessages");
     this.$store.dispatch("getAllComments", this.$store.state.messages.id);
   },
-    computed: {
-        ...mapState([
-            "userInfos", 
-            "messages", 
-            "comments",
-            "uploadFile"
-        ]),
-        ...mapGetters([
-            "humanizeDate"
-        ]),
-    },
   data: function () {
+    //déclération de variables
     return {
       commentsDisplayedByMessageId : [],
       commentUpdateMode : [],
@@ -175,12 +168,26 @@ export default {
       date: ''
     };
   },
+  computed: {
+  //Permet de récupérer les données du state du store 
+    ...mapState([
+        "userInfos", 
+        "messages", 
+        "comments",
+        "uploadFile"
+    ]),
+  //Permet de récupérer les fonctions du store
+    ...mapGetters([
+        "humanizeDate"
+    ]),
+  },
   methods: {
     //Récupérer et stocker une image
     uploadImage(e) {
       let image = e.target.files[0];
       this.$store.commit("uploadImage", {image});
-    },    
+    },
+  ///////////////////  METHODES MESSAGE ////////////////// 
     //Creation d'un nouveau message
     newMessage: function () {
       this.$store
@@ -191,13 +198,14 @@ export default {
         .then(
           (response) => {
             console.log(response);
-            this.$router.go()	// Refreshes page
+            this.$router.go()	// Rafraichir la page
           },
           (error) => {
             console.log(error.message);
           }
         );
     },
+  ///////////////////  METHODES COMMENT //////////////////
     //Creation d'un nouveau message
     newComment: function (messageId) {
       console.log('fonction new');
@@ -208,7 +216,7 @@ export default {
         .then(
           (response) => {
             console.log(response);
-            this.$router.go()	// Refreshes page
+            this.$router.go()	// Rafraichir la page
           },
           (error) => {
             console.log(error.message);
@@ -275,7 +283,7 @@ export default {
           .then(
           (response) => {
             console.log(response);
-            this.$router.go()	// Refreshes page
+            this.$router.go()	// Rafraichir la page
           },
           (error) => {
             console.log(error.message);
@@ -289,8 +297,9 @@ export default {
           messageId :this.$route.params.id, 
           commentId : commentId});
           this.commentMode = "Comment";
-          this.$router.go()	// Refreshes page
+          this.$router.go()	// Rafraichir la page
     },
+  ///////////////////  METHODES LIKE //////////////////
     //Like / Unlike
     likeClick : function (e, messageId) {
       console.log('likeClick');
@@ -302,7 +311,7 @@ export default {
         .then(
           (response) => {
             console.log(response);
-            this.$router.go()	// Refreshes page
+            this.$router.go()	// Rafraichir la page
           },
           (error) => {
             console.log(error.message);
@@ -314,7 +323,7 @@ export default {
         .then(
           (response) => {
             console.log(response);
-            this.$router.go()	// Refreshes page
+            this.$router.go()	// Rafraichir la page
           },
           (error) => {
             console.log(error.message);

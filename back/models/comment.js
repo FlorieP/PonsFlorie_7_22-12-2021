@@ -8,7 +8,8 @@ module.exports = (sequelize, DataTypes) => {
     messageId: DataTypes.INTEGER,
     content: DataTypes.STRING,
   })
-
+  //Associaiton avec les autres tables
+  //Appelé dans index.js de models
   Comment.associate = (models) => {
     // define association here
     models.Comment.belongsTo(models.User, {

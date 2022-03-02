@@ -143,6 +143,7 @@ exports.profil = (req, res, next) => {
 
 //Création du PUT pour modifier le profil d'un utilisateur
 exports.modify = (req, res, next) => {
+    //récupération du userId dnas le token
     let userId = token.getUserId(req);
     console.log("userId:" + userId);
     //Récupération du nom et l'url du fichier
@@ -153,11 +154,13 @@ exports.modify = (req, res, next) => {
                 res.status(403).json({ message: "Seul l'utilisateur concerné peut modifier son profil" })
                     .catch((error) => res.status(400).json({ message: error.message }));
             } else {
+                //récupération des données avec ou sans images
                 const userObject = req.file ?
                     {
                         ...req.body,
                         avatar: `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
                     } : { ...req.body }
+                //fonction de mise à jour du profil utilisateur
                 User.update({ ...userObject, id: req.params.id }, { where: { id: req.params.id } })
                     .then(() => res.status(200).json({ ...userObject }))
                     .catch(error => res.status(400).json({ error }))
@@ -169,6 +172,7 @@ exports.modify = (req, res, next) => {
 
 //Création du DELETE pour supprimer un utilisateur
 exports.delete = (req, res, next) => {
+    //récupération du userId dnas le token
     let userId = token.getUserId(req);
     console.log("userId:" + userId);
     console.log(req.params.id);
@@ -181,6 +185,7 @@ exports.delete = (req, res, next) => {
                     .catch((error) => res.status(400).json({ message: error.message }));
             } else {
                 let filename = "";
+                //s'il y a un fichier
                 if (user.avatar !== null) {
                     //récupération du nom du fichier via un split de l'url
                     filename = user.avatar.split('/images/')[1];
@@ -189,7 +194,6 @@ exports.delete = (req, res, next) => {
                 fs.unlink(`images/${filename}`, () => {
                     //fonction qui permet de supprimer un utilisateur
                     User.destroy({ where: { id: req.params.id } })
-                        //suppression de la sauce via le paramètre id
                         .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
                         .catch(error => res.status(400).json({ message: error.message }));
                 });

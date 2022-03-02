@@ -8,6 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     content: DataTypes.STRING,
     attachement: DataTypes.STRING
   })
+  //Associaiton avec les autres tables
   //Appelé dans index.js
   Message.associate = (models) => {
     // define association here

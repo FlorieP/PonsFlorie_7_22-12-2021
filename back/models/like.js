@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
     userId: DataTypes.INTEGER,
     messageId: DataTypes.INTEGER,
   })
+  //Associaiton avec les autres tables
   //Appelé dans index.js
   Like.associate = (models) => {
     // define association here

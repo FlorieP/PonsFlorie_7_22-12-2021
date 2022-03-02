@@ -1,6 +1,7 @@
 <template>
   <div class="body">
     <div class="card">
+      <!----- Entête ----->
       <h1 class="card__title" v-if="mode == 'login'">Connexion</h1>
       <h1 class="card__title" v-else>Inscription</h1>
       <p class="card__subtitle" v-if="mode == 'login'">
@@ -13,6 +14,7 @@
         Tu as déjà un compte ?
         <span class="card__action" @click="switchToLogin()">Se connecter</span>
       </p>
+      <!----- Formulaire ----->
       <div class="form" v-if="mode == 'signup'">
         <input v-model="firstname" class="form__input" type="text" placeholder="Prénom"/>
         <input v-model="lastname" class="form__input" type="text" placeholder="Nom"/>
@@ -29,6 +31,7 @@
       <div class="form message_error" v-if="mode == 'create' && status == 'error_create'">
         <p>Adresse mail déjà utilisée</p>
       </div>
+      <!----- Boutons ----->
       <div class="form">
         <button @click="login()" class="button" :class="{ 'button--disabled': !validatedFields }" v-if="mode == 'login'">
           <span v-if="status == 'loading'">Connexion en cours</span>
@@ -44,10 +47,12 @@
 </template>
 
 <script>
+//Importation module Vuex
 import { mapState } from 'vuex'
 
 export default {
   data: function () {
+    //déclération de variable
     return {
       mode: "login",
       firstname: "",
@@ -57,6 +62,7 @@ export default {
     };
   },
   computed: {
+    //Permet de valider si les champs sont remplis ou non
     validatedFields: function () {
       if (this.mode == "signup") {
         if (
@@ -77,15 +83,19 @@ export default {
         }
       }
     },
+    //Permet de récupérer les données du state du store 
     ...mapState(['status'])
   },
   methods: {
+    //Permet de passer de la fonction connexion à inscription
     switchToLogin: function () {
       this.mode = "login";
     },
+    //Permet de passer de la fonction inscription à connexion
     switchToSignup: function () {
       this.mode = "signup";
     },
+    //Fonction d'inscription de l'utilisateur
     signup: function () {
       const self = this;
       this.$store.dispatch('signup',  {
@@ -101,6 +111,7 @@ export default {
         console.log(error.message)
       })
     },
+    //Fonction de connexion de l'utilisateur
     login: function () {
       const self = this.$router;
       this.$store.dispatch('login',  {
@@ -126,7 +137,6 @@ export default {
   min-height: 100vh;
   padding: 32px;
 }
-
 .card {
   max-width: 100%;
   width: 500px;

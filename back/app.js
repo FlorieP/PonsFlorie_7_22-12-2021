@@ -27,10 +27,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //Création du gestionnaire de la ressource images de manière statique
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-//Test
+//Test de connexion
 app.get('/', function (req, res) {
     res.status(200).send('<h1> Connexion au server</h1>');
-
 });
 
 //Création des méthodes d'utilisation des routes
