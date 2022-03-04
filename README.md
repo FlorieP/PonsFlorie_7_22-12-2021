@@ -52,7 +52,7 @@ Logiciels nécessaires pour lancer l'application:
   sequelize db:migrate
 ``` 
 
-### Dossier Frontend
+### Front
 
 1. Installer Vue.js:
 ```bash
