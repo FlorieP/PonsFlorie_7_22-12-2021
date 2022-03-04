@@ -66,7 +66,7 @@ Logiciels nécessaires pour lancer l'application:
 ```bash
   npm run serve
 ``` 
-- Le serveur doit fonctionner sur [`http://localhost:8080/`](http://localhost:8080/).
+- Le serveur doit fonctionner sur [`http://localhost:8080/Login`](http://localhost:8080/Login).
 
 ## Auteur
 
