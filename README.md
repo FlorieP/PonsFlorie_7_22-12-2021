@@ -1,6 +1,7 @@
 # GROUPOMANIA
 
 Un réseau social interne d'entreprise.
+(Formation Développeur Web Openclassrooms - Projet 7)
   
 ## Pré-requis
 
