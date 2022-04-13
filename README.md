@@ -1,7 +1,6 @@
 # GROUPOMANIA
 
 Un réseau social interne d'entreprise.
-(Formation Développeur Web Openclassrooms - Projet 7)
   
 ## Pré-requis
 
@@ -72,3 +71,7 @@ Logiciels nécessaires pour lancer l'application:
 ## Auteur
 
 Florie PONS
+
+## Projet
+
+Formation Développeur Web d'Openclassrooms - Projet 7
